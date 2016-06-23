@@ -22,7 +22,7 @@ endfunction //
 	   3'b111 : begin
 	      is_last = 1'b1;
 	   end
-	   default : $error("%d : Illegal Wishbone B3 cycle type (%b)", $time, cti);
+	   //default : $error("%d : Illegal Wishbone B3 cycle type (%b)", $time, cti);
 	 endcase // case (wb_cti_i)
       end
    endfunction
@@ -37,7 +37,7 @@ function [aw-1:0] next_addr;
 	WRAP_8_BURST   : next_addr = {addr_i[aw-1:5], addr_i[4:0]+5'd4};
 	WRAP_16_BURST  : next_addr = {addr_i[aw-1:6], addr_i[5:0]+6'd4};
 	CONSTANT_BURST : next_addr = addr_i;
-	default : $error("%d : Illegal burst type (%b)", $time, burst_type_i);
+	//default : $error("%d : Illegal burst type (%b)", $time, burst_type_i);
       endcase // case (burst_type_i)
    end
 endfunction
