@@ -1,0 +1,42 @@
+{
+    "project":"simulate_isim",
+    "installed tools": [
+        "xilinx",
+        "altera",
+        "icarus"
+    ],
+    "flow_steps": {
+	      "1" : "clean",
+        "2" : "parse",
+        "3" : "test_case",
+        "4" : "elaborate",
+        "5" : "xsimulation"
+    },
+    "flow" : {
+	      "clean" :{
+	          "executable" : "rm",
+	          "arguments" : "-rf xsim.dir xvlog* xelab.pb webtalk* xsim.dir/ xvlog.pb *.wdb"
+	      },
+	      "parse" :{
+	          "executable" : "xvlog",
+            "arguments" : "-prj rtl_xsim.prj"
+	      },
+	      "test_case" :{
+	          "executable" : "xvlog",
+            "arguments" : " $simulation"
+	      },        
+	      "elaborate" :{
+	          "executable" : "xelab",
+            "arguments" : "-prj rtl_xsim.prj -debug all  --timescale 1ns/1ns -L unisims_ver -L unimacro_ver work.testbench"
+	      },        
+	      "xsimulation" : {
+	          "executable": "xsim",
+	          "arguments" : " work.testbench -tclbatch simulation.tcl"	
+	      },
+	      "run" : {
+	          "executable" : "./a.out",
+	          "arguments"  : " "
+	      }
+    },
+    "remove_files" : "hack.vh webtalk* work.testbench.wdb xsim* xvlog* xelab*"
+}
