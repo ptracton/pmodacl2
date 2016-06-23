@@ -21,7 +21,7 @@
         },
         "simulation" : {
             "executable": "ncverilog",
-            "arguments" : " -64bit -v93 +access+rwc -clean -cdslib cds.lib -f rtl_sim.f -timescale 1ns/1ns +define+NCVERILOG $simulation"
+            "arguments" : " -v93 +access+rwc -clean -cdslib cds.lib -f rtl_sim.f -timescale 1ns/1ns +define+NCVERILOG $simulation"
         },
         "run" : {
             "executable" : "./a.out",
