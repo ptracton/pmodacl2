@@ -33,8 +33,11 @@ module test_case ();
       @(posedge `WB_CLK);
 
       `SIMPLE_SPI_INIT;      
-      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_LOW, 8'hde);
+      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_LOW, 8'h7);
+      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_HIGH, 8'h65);
 
+      `ADXL362_READ_REGISTER(`ADXL362_DEVID_AD, data_out);
+ //     `ADXL362_READ_REGISTER(`ADXL362_DEVID_MST, data_out);
       
       #10000;
       `TEST_COMPLETE;      

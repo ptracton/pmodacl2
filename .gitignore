@@ -37,3 +37,10 @@
 
 # Icarus Verilog
 *.vcd
+*.key
+*.log
+*.diag
+*.pyc
+.simvision/
+INCA_libs/
+*.shm/

@@ -4,6 +4,7 @@
 +incdir+../behavioral/verilog_utils/
 +incdir+../behavioral/wb_intercon/
 +incdir+../behavioral/wb_bfm/
++incdir+../behavioral/adxl362/
 +define+VERBOSE
 +define+SIM
       
@@ -28,3 +29,5 @@
 ../behavioral/adxl362/adxl362.v
 ../behavioral/adxl362/adxl362_system_controller.v
 ../behavioral/adxl362/adxl362_spi.v
+../behavioral/adxl362/adxl362_regs.v      
+../behavioral/adxl362/adxl362_fifo.v      
