@@ -16,7 +16,7 @@ module test_case ();
    // Test Configuration
    // These parameters need to be set for each test case
    //
-   parameter simulation_name = "test_00";
+   parameter simulation_name = "accel_00";
   
    
    parameter number_of_tests = 2;
@@ -32,11 +32,9 @@ module test_case ();
       @(negedge `WB_RST);
       @(posedge `WB_CLK);
 
-      `TB.master_bfm.read_burst(`SPI_CONTROL_REG_ADDRESS, data_out, 4'h8, 1, 0, err);
-      `TEST_COMPARE("SPI Control REG POR", 32'h10000000, data_out);
+      `SIMPLE_SPI_INIT;      
+      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_LOW, 8'hde);
 
-     `TB.master_bfm.read_burst(`SPI_STATUS_REG_ADDRESS, data_out, 4'h4, 1, 0, err);
-      `TEST_COMPARE("SPI Status REG POR", 32'h0005_0000, data_out);
       
       #10000;
       `TEST_COMPLETE;      

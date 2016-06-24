@@ -9,7 +9,8 @@
       
 
 ../testbench/adxl362_testbench.v
-../testbench/test_tasks.v
+ ../testbench/test_tasks.v
+../testbench/adxl362_tasks.v
 ../testbench/testbench_intercon.v
 ../testbench/dump.v
 
@@ -23,3 +24,7 @@
 
 ../behavioral/simple_spi/trunk/rtl/verilog/simple_spi_top.v
 ../behavioral/simple_spi/trunk/rtl/verilog/fifo4.v
+
+../behavioral/adxl362/adxl362.v
+../behavioral/adxl362/adxl362_system_controller.v
+../behavioral/adxl362/adxl362_spi.v

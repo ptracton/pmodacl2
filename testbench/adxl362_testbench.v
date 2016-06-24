@@ -52,6 +52,14 @@ module adxl362_testbench (/*AUTOARG*/ ) ;
                             .wb_rty_i(wb_s2m_bfm_rty));   
 
 
+   wire sclk;
+   wire miso;
+   wire mosi;
+   reg  ncs = 1;
+   wire int1;
+   wire int2;   
+   wire simple_spi_int;
+   
    simple_spi_top spi(
                       // 8bit WISHBONE bus slave interface
                       .clk_i(wb_clk), // clock
@@ -63,15 +71,29 @@ module adxl362_testbench (/*AUTOARG*/ ) ;
                       .dat_i(wb_m2s_spi_dat), // data input
                       .dat_o(wb_s2m_spi_dat), // data output
                       .ack_o(wb_s2m_spi_ack), // normal bus termination
-                      .inta_o(), // interrupt output
+                      .inta_o(simple_spi_int), // interrupt output
 
                       // SPI port
-                      .sck_o(), // serial clock output
-                      .mosi_o(), // MasterOut SlaveIN
-                      .miso_i()   // MasterIn SlaveOut
+                      .sck_o(sck), // serial clock output
+                      .mosi_o(mosi), // MasterOut SlaveIN
+                      .miso_i(miso)   // MasterIn SlaveOut
                       );
    
+   adxl362 accelerometer(
+                         .SCLK(sck),
+                         .MOSI(mosi),
+                         .nCS(ncs),
+                         .MISO(miso),
+                         .INT1(int1),
+                         .INT2(int2)                         
+                         );
+   
 
+   //
+   // Tasks used to interface with ADXL362
+   //
+   adxl362_tasks adxl362_tasks();
+      
    //
    // Tasks used to help test cases
    //
