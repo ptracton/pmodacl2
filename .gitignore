@@ -34,3 +34,6 @@
 
 # Emacs files
 *~
+
+# Icarus Verilog
+*.vcd
