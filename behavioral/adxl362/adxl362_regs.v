@@ -92,16 +92,14 @@ module adxl362_regs (/*AUTOARG*/
    //
    // Write to the registers
    //
-   always @(posedge clk_16mhz) begin
-      if (write) begin
-         case (address)
-           `ADXL362_THRESH_ACT_LOW:    threshold_active[07:00] = data_write;        
-           `ADXL362_THRESH_ACT_HIGH:   threshold_active[10:08] = data_write[2:0];
-           `ADXL362_TIME_ACT:          time_active[07:00] = data_write;
-           `ADXL362_THRESH_INACT_LOW:  threshold_inactive[07:00] = data_write;
-           `ADXL362_THRESH_INACT_HIGH: threshold_inactive[10:08] = data_write[2:0];        
-         endcase // case (address)
-      end // if (write)      
-   end
+   always @(posedge write) begin
+      case (address)
+        `ADXL362_THRESH_ACT_LOW:    threshold_active[07:00] = data_write;        
+        `ADXL362_THRESH_ACT_HIGH:   threshold_active[10:08] = data_write[2:0];
+        `ADXL362_TIME_ACT:          time_active[07:00] = data_write;
+        `ADXL362_THRESH_INACT_LOW:  threshold_inactive[07:00] = data_write;
+        `ADXL362_THRESH_INACT_HIGH: threshold_inactive[10:08] = data_write[2:0];        
+      endcase // case (address)
+   end   
    
 endmodule // adxl362_regs

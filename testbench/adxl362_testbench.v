@@ -52,7 +52,7 @@ module adxl362_testbench (/*AUTOARG*/ ) ;
                             .wb_rty_i(wb_s2m_bfm_rty));   
 
 
-   wire sclk;
+   wire sck;
    wire miso;
    wire mosi;
    reg  ncs = 1;

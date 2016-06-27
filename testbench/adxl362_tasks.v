@@ -101,32 +101,50 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
    
    task read_single_register;
       input [7:0] address;
-      output [7:0] data;
+      output [31:0] data;
       
       begin
+
+         //
+         // Start CS
+         //
          @(posedge `WB_CLK);
          `ADXL362_NCS = 0;
-         
+
+         //
+         // Write the READ Command the ADXL362
+         //
          @(posedge `WB_CLK);
          `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, {16'h0,`ADXL362_COMMAND_READ, 8'h0}, 4'h2, 1, 0, err);         
          @(posedge `SIMPLE_SPI_IRQ);
          `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
-         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
-         
+         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data, 4'h2, 1, 0, err);
+
+
+         //
+         // Write out the ADDRESS to the ADXL362
+         //
          @(posedge `WB_CLK);
+         
          `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, {16'h0, address, 8'h0}, 4'h2, 1, 0, err);
          @(posedge `SIMPLE_SPI_IRQ);
          `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
-         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
-         
-         @(posedge `WB_CLK);
-         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
-         `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
+         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data, 4'h2, 1, 0, err);
 
-         data = data_out[15:8];
-         
-         $display("ADXL362 Read Register REG=0x%x Data=0x%x @ %d", address, data_out, $time);
-         
+         //
+         // Read data from ADXL 362
+         //
+         @(posedge `WB_CLK);
+         `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, 32'h0000_0000, 4'h2, 1, 0, err);
+         @(posedge `SIMPLE_SPI_IRQ);
+         `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
+         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data, 4'h2, 1, 0, err);
+                
+         $display("ADXL362 Read Register REG=0x%x Data=0x%x @ %d", address, data, $time);
+
+         //
+         // End CS
+         //
          @(posedge `WB_CLK);
          `ADXL362_NCS = 1;
          repeat(2)  @(posedge `WB_CLK);

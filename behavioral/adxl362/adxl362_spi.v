@@ -75,6 +75,7 @@ module adxl362_spi (/*AUTOARG*/
    parameter STATE_READ_REGISTER  = 4'h3;   
    parameter STATE_WRITE_REGISTER = 4'h4;
    parameter STATE_READ_FIFO      = 4'h5;
+   parameter STATE_INCREMENT_ADDRESS = 4'h6;
    
    reg [3:0] state;
    reg [3:0] next_state;
@@ -110,7 +111,7 @@ module adxl362_spi (/*AUTOARG*/
               read_fifo = 1;              
               address = data_rd;
               if (command == `ADXL362_COMMAND_WRITE) next_state = STATE_READ_DATA;
-              if (command == `ADXL362_COMMAND_READ)  begin next_state = STATE_READ_REGISTER; spi_data_out = data_read; end
+              if (command == `ADXL362_COMMAND_READ)  next_state = STATE_READ_REGISTER;
               if (command == `ADXL362_COMMAND_FIFO)  next_state = STATE_READ_FIFO;              
            end else begin
               next_state = STATE_READ_ADDRESS;              
@@ -122,7 +123,6 @@ module adxl362_spi (/*AUTOARG*/
            if (!fifo_empty) begin
               read_fifo = 1;              
               data_write = data_rd;
-              write = 1;
               next_state = STATE_WRITE_REGISTER;
            end else begin
               write = 0;              
@@ -132,9 +132,8 @@ module adxl362_spi (/*AUTOARG*/
         
         STATE_WRITE_REGISTER: begin
            read_fifo = 0;           
-           write = 0;                           
+           write = 1;                           
            if (nCS == 0)begin
-              address = address + 1;
               next_state = STATE_READ_DATA;              
            end else begin
               next_state = STATE_IDLE;              
@@ -142,16 +141,22 @@ module adxl362_spi (/*AUTOARG*/
         end
            
         STATE_READ_REGISTER:begin
-           //spi_data_out = data_read;
-           if (nCS == 0)begin
-              address = address + 1;
+           read_fifo = 0;
+           spi_data_out = data_read;
+           if (nCS == 0 && fifo_empty)begin
               next_state = STATE_READ_REGISTER;              
            end else begin
               next_state = STATE_IDLE;              
            end           
         end
         
- 
+        STATE_INCREMENT_ADDRESS: begin
+           address = address + 1;
+           read_fifo = 0;
+           if (command == `ADXL362_COMMAND_WRITE) next_state = STATE_READ_DATA;
+           if (command == `ADXL362_COMMAND_READ)  next_state = STATE_READ_REGISTER;
+           if (command == `ADXL362_COMMAND_FIFO)  next_state = STATE_READ_FIFO;            
+        end
         default: begin
            next_state = STATE_IDLE;             
         end
