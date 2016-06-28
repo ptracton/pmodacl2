@@ -38,7 +38,7 @@ module adxl362_regs (/*AUTOARG*/
    output reg [7:0]  intmap2 = 0;
    output reg [7:0]  filter_ctrl = 8'h13;
    output reg [7:0]  power_ctrl = 0;
-   output reg [7:0]  self_test = 0;
+   output reg        self_test = 0;
 
    input wire [11:0] xdata;
    input wire [11:0] ydata;
@@ -98,7 +98,16 @@ module adxl362_regs (/*AUTOARG*/
         `ADXL362_THRESH_ACT_HIGH:   threshold_active[10:08] = data_write[2:0];
         `ADXL362_TIME_ACT:          time_active[07:00] = data_write;
         `ADXL362_THRESH_INACT_LOW:  threshold_inactive[07:00] = data_write;
-        `ADXL362_THRESH_INACT_HIGH: threshold_inactive[10:08] = data_write[2:0];        
+        `ADXL362_THRESH_INACT_HIGH: threshold_inactive[10:08] = data_write[2:0]; 
+        `ADXL362_TIME_INACT_LOW:    time_inactive[7:0] = data_write;
+        `ADXL362_TIME_INACT_HIGH:   time_inactive[15:8] = data_write;
+        `ADXL362_FIFO_CONTROL:      fifo_ctrl = data_write;
+        `ADXL362_FIFO_SAMPLES:      fifo_samples= data_write;
+        `ADXL362_INTMAP1:           intmap1 = data_write;
+        `ADXL362_INTMAP2:           intmap2 = data_write;
+        `ADXL362_FILTER_CTL:        filter_ctrl = data_write;
+        `ADXL362_POWER_CTL:         power_ctrl = data_write;
+        `ADXL362_SELF_TEST:         self_test = data_write[0];        
       endcase // case (address)
    end   
    

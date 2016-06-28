@@ -12,11 +12,12 @@ module adxl362_fifo (/*AUTOARG*/
    // Outputs
    data_rd, fifo_empty,
    // Inputs
-   read, write, data_wr, clk_read
+   read, write, flush, data_wr, clk_read
    ) ;
 
    input wire read;
    input wire write;
+   input wire flush;   
    input wire [7:0] data_wr;
    output wire [7:0] data_rd;
    output wire       fifo_empty;
@@ -61,5 +62,15 @@ module adxl362_fifo (/*AUTOARG*/
          read_ptr <= read_ptr + 1;
       end
    end
-   
+
+
+   //
+   // Flush FIFO
+   //
+   // Dumps all data and resets the pointers
+   //
+   always @(posedge flush) begin
+      read_ptr <= 0;
+      write_ptr <= 0;      
+   end
 endmodule // adxl362_fifo

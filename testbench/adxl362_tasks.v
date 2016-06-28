@@ -108,6 +108,48 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
       end
    endtask // write_burst
    
+
+   task write_burst_registers;
+      input [7:0] address;
+      input [(512*7):0] data;
+      input [31:0] count;
+      integer      ii;
+      
+      begin
+     @(posedge `WB_CLK);
+         `ADXL362_NCS = 1;         
+         $display("ADXL362 Write Register REG=0x%x Count=0x%x @ %d", address, count, $time);
+         @(posedge `WB_CLK);
+         `ADXL362_NCS = 0;
+         
+         @(posedge `WB_CLK);
+         `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, {16'h0,`ADXL362_COMMAND_WRITE, 8'h0}, 4'h2, 1, 0, err);         
+         @(posedge `SIMPLE_SPI_IRQ);
+         `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
+         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
+         
+         @(posedge `WB_CLK);
+         `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, {16'h0, address, 8'h0}, 4'h2, 1, 0, err);
+         @(posedge `SIMPLE_SPI_IRQ);
+         `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
+         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
+
+         for (ii=0; ii<count; ii=ii+1) begin
+            //@(posedge `WB_CLK);
+            `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, {16'h0, data[(ii*8)+7 -: 8],  8'h0}, 4'h2, 1, 0, err);
+            @(posedge `SIMPLE_SPI_IRQ);
+            `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
+            `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
+            
+         end
+
+         @(posedge `WB_CLK);
+         `ADXL362_NCS = 1;
+         repeat(2)  @(posedge `WB_CLK);
+         
+      end
+   endtask // write_burst
+   
    
    task read_single_register;
       input [7:0] address;
