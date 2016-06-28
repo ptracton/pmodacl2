@@ -98,6 +98,16 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          repeat(2)  @(posedge `WB_CLK);
       end
    endtask //
+
+   task write_double_register;
+      input [7:0] address;
+      input [15:0] data;
+      begin
+         write_single_register(address,   data[07:00]);
+         write_single_register(address+1, data[15:08]);
+      end
+   endtask // write_burst
+   
    
    task read_single_register;
       input [7:0] address;
@@ -140,7 +150,7 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
          `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data, 4'h2, 1, 0, err);
                 
-         $display("ADXL362 Read Register REG=0x%x Data=0x%x @ %d", address, data, $time);
+         //$display("ADXL362 Read Register REG=0x%x Data=0x%x @ %d", address, data, $time);
 
          //
          // End CS
@@ -150,6 +160,29 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          repeat(5)  @(posedge `WB_CLK);
       end
    endtask //
-   
+
+   task check_single_register;
+      input [7:0] address;
+      input [7:0] expected;
+      reg [31:0]  data;
+      
+      begin
+         read_single_register(address, data);
+         `TEST_COMPARE("Compare Register", expected, data[15:08]);         
+      end      
+   endtask //
+  
+   task check_double_register;
+      input [7:0] address;
+      input [15:0] expected;
+      reg [31:0]  data_low;
+      reg [31:0]  data_high;
+      
+      begin
+         read_single_register(address,   data_low);
+         read_single_register(address+1, data_high);
+         `TEST_COMPARE("Compare Register", expected, {data_high[15:08], data_low[15:08]});         
+      end      
+   endtask // 
    
 endmodule // adxl362_tasks

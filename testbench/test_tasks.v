@@ -129,12 +129,12 @@ module test_tasks (/*AUTOARG*/ ) ;
          
          if (test_count == 0) begin
             $display("--------------------------------------------------------------------------------------------");
-            $display("|TIME |Test| \tTest Case \t\t\t\t|Expected   |\tMeasured   | State |"); 
+            $display("|TIME     |Test|Test Case  \t\t\t\t|Expected   |\tMeasured   | State |"); 
             $display("--------------------------------------------------------------------------------------------");
          end
          
          test_count <= test_count + 1;         
-         $display("|%4d |%4d|\t%0s \t|0x%8h |\t0x%8h |%s |", $time-1, test_count, display_string, expected, measured, pass_fail);
+         $display("|%8d |%4d|%0s \t|0x%8h |\t0x%8h |%s |", $time-1, test_count, display_string, expected, measured, pass_fail);
          if (((test_count %10) == 0) && test_count >0) begin
             $display("--------------------------------------------------------------------------------------------");
          end

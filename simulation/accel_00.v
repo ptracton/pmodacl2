@@ -19,7 +19,7 @@ module test_case ();
    parameter simulation_name = "accel_00";
   
    
-   parameter number_of_tests = 2;
+   parameter number_of_tests = 3;
 
    reg  err;
    reg [31:0] data_out;
@@ -33,12 +33,17 @@ module test_case ();
       @(posedge `WB_CLK);
 
       `SIMPLE_SPI_INIT;      
-      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_LOW, 8'h7);
-      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_HIGH, 8'h65);
+//      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_LOW, 8'h7);
+//      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_HIGH, 8'h65);
+      `ADXL362_WRITE_DOUBLE_REGISTER(`ADXL362_THRESH_ACT_LOW, 16'h6507);
       
-      `ADXL362_READ_REGISTER(`ADXL362_DEVID_AD, data_out);      
-      `ADXL362_READ_REGISTER(`ADXL362_DEVID_MST, data_out);
-      `ADXL362_READ_REGISTER(`ADXL362_THRESH_ACT_LOW, data_out);
+      `ADXL362_CHECK_REGISTER(`ADXL362_DEVID_AD, 8'hAD);
+      `ADXL362_CHECK_REGISTER(`ADXL362_DEVID_MST, 8'h1D);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_THRESH_ACT_LOW, 16'h507);
+      
+//      `ADXL362_READ_REGISTER(`ADXL362_DEVID_AD, data_out);      
+//      `ADXL362_READ_REGISTER(`ADXL362_DEVID_MST, data_out);
+//      `ADXL362_READ_REGISTER(`ADXL362_THRESH_ACT_LOW, data_out);
       #10000;
       `TEST_COMPLETE;      
    end

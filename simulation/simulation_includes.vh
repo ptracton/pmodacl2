@@ -30,6 +30,9 @@
 `define ADXL362_NCS   `TB.ncs
 `define ADXL362_WRITE_REGISTER `ADXL362_TASKS.write_single_register
 `define ADXL362_READ_REGISTER `ADXL362_TASKS.read_single_register
+`define ADXL362_CHECK_REGISTER `ADXL362_TASKS.check_single_register
+`define ADXL362_CHECK_DOUBLE_REGISTER `ADXL362_TASKS.check_double_register
+`define ADXL362_WRITE_DOUBLE_REGISTER `ADXL362_TASKS.write_double_register
 `define SIMPLE_SPI_INIT  `ADXL362_TASKS.init_simple_spi
 `define SIMPLE_SPI_IRQ `TB.simple_spi_int
 
