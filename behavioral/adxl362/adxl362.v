@@ -39,7 +39,7 @@ module adxl362 (/*AUTOARG*/
    wire [7:0]           intmap2;                // From registers of adxl362_regs.v
    wire [7:0]           power_ctrl;             // From registers of adxl362_regs.v
    wire                 reset;                  // From sys_con of adxl362_system_controller.v
-   wire [7:0]           self_test;              // From registers of adxl362_regs.v
+   wire                 self_test;              // From registers of adxl362_regs.v
    wire [10:0]          threshold_active;       // From registers of adxl362_regs.v
    wire [10:0]          threshold_inactive;     // From registers of adxl362_regs.v
    wire [7:0]           time_active;            // From registers of adxl362_regs.v
@@ -107,7 +107,7 @@ module adxl362 (/*AUTOARG*/
                           .intmap2              (intmap2[7:0]),
                           .filter_ctrl          (filter_ctrl[7:0]),
                           .power_ctrl           (power_ctrl[7:0]),
-                          .self_test            (self_test[7:0]),
+                          .self_test            (self_test),
                           // Inputs
                           .clk_16mhz            (clk_16mhz),
                           .write                (write),

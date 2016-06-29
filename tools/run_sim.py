@@ -61,9 +61,9 @@ if __name__ == "__main__":
                         required = True,
                         action="store")    
     
-    print (os.environ['PATH'])
     args = parser.parse_args()
     if args.debug:
+        print (os.environ['PATH'])
         print(args)
 
     if args.icarus:
@@ -81,15 +81,16 @@ if __name__ == "__main__":
         sys.exit(-1)
 
     flow_steps = json_data['flow_steps']
-    print(flow_steps)
+    if args.debug:
+        print(flow_steps)
 
     for step in sorted(flow_steps.keys()):
-        print("Running Step: %s " % step)
+        print("\nRunning Step: %s " % step)
         executable = json_data['flow'][flow_steps[step]]['executable']
         arguments = string.Template(json_data['flow'][flow_steps[step]]['arguments'])
         arguments_str = arguments.safe_substitute(simulation=args.simulation)
-        #executable = which(executable)
-        print(executable)
+        if args.debug:        
+            print(executable)
         if (arguments == None):
             command = executable
         else:         
