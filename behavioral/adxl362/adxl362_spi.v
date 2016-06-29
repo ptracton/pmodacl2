@@ -88,7 +88,8 @@ module adxl362_spi (/*AUTOARG*/
    parameter STATE_INCREMENT_ADDRESS = 4'h9;
    parameter STATE_FINISH            = 4'hA;
    parameter STATE_WRITE_EMPTY_FIFO  = 4'hB;   
-
+   parameter STATE_RESPOND_DATA      = 4'hC;
+   
    reg [3:0] state = STATE_IDLE;   
    reg [3:0] next_state = STATE_IDLE;      
    reg       first = 0;
@@ -152,10 +153,20 @@ module adxl362_spi (/*AUTOARG*/
               first = 0;              
               next_state = STATE_INCREMENT_ADDRESS;
            end else begin
-              next_state = STATE_WAIT_DATA;              
+              next_state = STATE_RESPOND_DATA;              
            end           
         end
 
+        STATE_RESPOND_DATA:begin
+           if (nCS) begin
+              next_state = STATE_FINISH;
+           end else if (bit_count == 3'h7) begin
+              next_state = STATE_READ_DATA;              
+           end else begin
+              next_state = STATE_RESPOND_DATA;              
+           end
+        end
+        
         STATE_READ_FIFO: begin
            next_state = STATE_IDLE;           
         end
@@ -168,7 +179,7 @@ module adxl362_spi (/*AUTOARG*/
            end else if (fifo_empty == 0) begin
               next_state = STATE_WRITE_REGISTER;              
            end else begin
-              next_state = STATE_WAIT_DATA;              
+              next_state = STATE_WAIT_DATA;
            end           
         end
         
@@ -237,7 +248,8 @@ module adxl362_spi (/*AUTOARG*/
        STATE_WRITE_REGISTER: state_name = "Write Register";
        STATE_INCREMENT_ADDRESS: state_name = "Increment Address";
        STATE_FINISH: state_name = "State Finish";  
-       STATE_WRITE_EMPTY_FIFO: state_name = "Write Empty FIFO"; 
+       STATE_WRITE_EMPTY_FIFO: state_name = "Write Empty FIFO";
+       STATE_RESPOND_DATA: state_name = "Respond Data";       
        default: state_name = "DEFAULT!";
        
      endcase // case (state)

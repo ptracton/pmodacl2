@@ -28,8 +28,8 @@ module test_case (/*AUTOARG*/ ) ;
    //
    // Can't pass memories to tasks, so gigantic arrays!
    //
-   reg [(512*7):0] write_mem = 0;   
-   reg [(512*7):0] read_mem  = 0;
+   reg [(16*7):0] write_mem = 0;   
+   reg [(16*7):0] read_mem  = 0;
    
    initial begin
       $display("Test 00 Case");
@@ -52,7 +52,21 @@ module test_case (/*AUTOARG*/ ) ;
       repeat(100) @(posedge `WB_CLK);
       
       `ADXL362_WRITE_BURST_REGISTERS(`ADXL362_THRESH_ACT_LOW, write_mem, 14);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_THRESH_ACT_LOW, 16'h507);
+      `ADXL362_READ_BURST_REGISTERS(`ADXL362_THRESH_ACT_LOW, read_mem, 14);
+      `TEST_COMPARE("Reg 0", 8'h80, read_mem[7:0]);
+      $display("MEM 0: 0x%x", read_mem[07:00]);
+      $display("MEM 1: 0x%x", read_mem[15:08]);
+      $display("MEM 2: 0x%x", read_mem[23:16]);
+      $display("MEM 3: 0x%x", read_mem[31:24]);
+      $display("MEM 4: 0x%x", read_mem[39:32]);
+      $display("MEM 5: 0x%x", read_mem[47:40]);
+      $display("MEM 6: 0x%x", read_mem[55:48]);
+      $display("MEM 7: 0x%x", read_mem[63:56]);
+      
+     // `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_THRESH_ACT_LOW, 16'h507);
+
+
+      
       #10000;
       `TEST_COMPLETE;      
    end
