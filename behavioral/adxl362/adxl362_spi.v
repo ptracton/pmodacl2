@@ -139,12 +139,12 @@ module adxl362_spi (/*AUTOARG*/
            end else begin
               if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_DATA;
               if (`ADXL362_COMMAND_FIFO  == command) next_state = STATE_READ_FIFO;
-              if (`ADXL362_COMMAND_READ  == command) next_state = STATE_READ_DATA;
-              
+              if (`ADXL362_COMMAND_READ  == command) next_state = STATE_READ_DATA;              
            end
         end
       
         STATE_READ_DATA: begin
+           flush_fifo = 1;
            read_fifo = 0;           
            spi_data_out = data_read;
            if (nCS) begin
@@ -158,10 +158,13 @@ module adxl362_spi (/*AUTOARG*/
         end
 
         STATE_RESPOND_DATA:begin
+           flush_fifo = 1;
            if (nCS) begin
               next_state = STATE_FINISH;
            end else if (bit_count == 3'h7) begin
-              next_state = STATE_READ_DATA;              
+//              next_state = STATE_READ_DATA;
+              first = 0;              
+              next_state = STATE_INCREMENT_ADDRESS;              
            end else begin
               next_state = STATE_RESPOND_DATA;              
            end

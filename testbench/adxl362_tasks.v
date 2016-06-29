@@ -205,7 +205,7 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
 
    task read_burst_registers;
       input [7:0] address;
-      output [(14*7):0] data;
+      output [(16*7):0] data;
       input [31:0] count;
       integer      ii;
       
@@ -229,15 +229,19 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
 
          for (ii=0; ii<count; ii=ii+1) begin
-            //@(posedge `WB_CLK);
+            @(posedge `WB_CLK);
             `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, 0, 4'h2, 1, 0, err);
             @(posedge `SIMPLE_SPI_IRQ);
             `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
-            `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data[(ii*8)+7 -: 8], 4'h2, 1, 0, err);
-            $display("Read %d Mem = 0x%x @ %d", ii,  data[(ii*8)+7 -: 8], $time);            
+           // `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data[(ii*8)+7 -: 8], 4'h2, 1, 0, err);
+//            $display("Read %d Mem = 0x%x @ %d", ii,  data[(ii*8)+7 -: 8], $time);                        
+            `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
+//            $display("Read %d Mem = 0x%x @ %d", ii,  data_out, $time); 
+            data[(ii*8)+7 -: 8] = data_out[15:8];           
+
          end
 
-         @(posedge `WB_CLK);
+         @(posedge `WB_CLK);         
          `ADXL362_NCS = 1;
          repeat(5)  @(posedge `WB_CLK);
          

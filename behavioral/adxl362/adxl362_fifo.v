@@ -48,8 +48,10 @@ module adxl362_fifo (/*AUTOARG*/
    // around since it is a 32 element fifo with a 5 bit pointer
    //
    always @(posedge write) begin
-      fifo[write_ptr] <= data_wr;
-      write_ptr <= write_ptr + 1;        
+//      if (!flush) begin
+         fifo[write_ptr] <= data_wr;
+         write_ptr <= write_ptr + 1;
+//      end
    end
 
    //
@@ -58,7 +60,7 @@ module adxl362_fifo (/*AUTOARG*/
    // around since it is a 32 element fifo with a 5 bit pointer
    //   
    always @(posedge clk_read) begin
-      if (read) begin
+      if (read & !flush) begin
          read_ptr <= read_ptr + 1;
       end
    end

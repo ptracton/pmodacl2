@@ -75,16 +75,16 @@ module adxl362_regs (/*AUTOARG*/
         `ADXL362_TIME_ACT:   data_read = time_active;
         `ADXL362_THRESH_INACT_LOW: data_read =  threshold_inactive[07:00];
         `ADXL362_THRESH_INACT_HIGH: data_read = threshold_inactive[10:08];
-        `ADXL362_TIME_INACT_LOW: data_read = 0;
-        `ADXL362_TIME_INACT_HIGH: data_read = 0;
+        `ADXL362_TIME_INACT_LOW: data_read = time_inactive[7:0];
+        `ADXL362_TIME_INACT_HIGH: data_read = {5'b0, time_inactive[10:08]};
         `ADXL362_ACT_INACT_CTL: data_read = 0;
-        `ADXL362_FIFO_CONTROL: data_read = 0;
-        `ADXL362_FIFO_SAMPLES: data_read = 0;
-        `ADXL362_INTMAP1: data_read = 0;
-        `ADXL362_INTMAP2: data_read = 0;
-        `ADXL362_FILTER_CTL: data_read =0;
-        `ADXL362_POWER_CTL: data_read = 0;
-        `ADXL362_SELF_TEST: data_read =0;
+        `ADXL362_FIFO_CONTROL: data_read = fifo_ctrl;
+        `ADXL362_FIFO_SAMPLES: data_read = fifo_samples;
+        `ADXL362_INTMAP1: data_read = intmap1;
+        `ADXL362_INTMAP2: data_read = intmap2;
+        `ADXL362_FILTER_CTL: data_read =filter_ctrl;
+        `ADXL362_POWER_CTL: data_read = power_ctrl;
+        `ADXL362_SELF_TEST: data_read ={7'b0, self_test};
         default: data_read = 0;        
       endcase // case (address)      
    end
