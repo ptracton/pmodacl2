@@ -32,7 +32,7 @@ module adxl362 (/*AUTOARG*/
    wire                 clk;                    // From sys_con of adxl362_system_controller.v
    wire                 clk_16mhz;              // From sys_con of adxl362_system_controller.v
    wire                 clk_odr;                // From sys_con of adxl362_system_controller.v
-   wire                 data_fifo_read;         // From spi of adxl362_spi.v
+   wire                 data_fifo_write;        // From spi of adxl362_spi.v
    wire [7:0]           data_write;             // From spi of adxl362_spi.v
    wire [3:0]           fifo_ctrl;              // From registers of adxl362_regs.v
    wire [7:0]           fifo_samples;           // From registers of adxl362_regs.v
@@ -65,7 +65,7 @@ module adxl362 (/*AUTOARG*/
    wire                 fifo_empty;   
    wire [7:0]           status;
    reg                  data_ready = 0;
-   
+   wire [7:0]           data_fifo_read;   
 
    assign odr = filter_ctrl[2:0];   
    assign fifo_mode = fifo_ctrl[1:0];
@@ -117,7 +117,7 @@ module adxl362 (/*AUTOARG*/
                    .MISO                (MISO),
                    .address             (address[5:0]),
                    .data_write          (data_write[7:0]),
-                   .data_fifo_read      (data_fifo_read),
+                   .data_fifo_write     (data_fifo_write),
                    .write               (write),
                    // Inputs
                    .SCLK                (SCLK),
@@ -125,7 +125,7 @@ module adxl362 (/*AUTOARG*/
                    .nCS                 (nCS),
                    .clk_16mhz           (clk_16mhz),
                    .data_read           (data_read[7:0]),
-                   .data_fifo           (data_fifo[7:0]));
+                   .data_fifo_read      (data_fifo_read[7:0]));
 
    //
    // Registers
