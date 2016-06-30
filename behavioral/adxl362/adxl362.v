@@ -31,9 +31,13 @@ module adxl362 (/*AUTOARG*/
    wire [5:0]           address;                // From spi of adxl362_spi.v
    wire                 clk;                    // From sys_con of adxl362_system_controller.v
    wire                 clk_16mhz;              // From sys_con of adxl362_system_controller.v
+   wire                 clk_odr;                // From sys_con of adxl362_system_controller.v
+   wire                 data_fifo_read;         // From spi of adxl362_spi.v
    wire [7:0]           data_write;             // From spi of adxl362_spi.v
    wire [3:0]           fifo_ctrl;              // From registers of adxl362_regs.v
    wire [7:0]           fifo_samples;           // From registers of adxl362_regs.v
+   wire                 fifo_write;             // From accelerometer of adxl362_accelerometer.v
+   wire [15:0]          fifo_write_data;        // From accelerometer of adxl362_accelerometer.v
    wire [7:0]           filter_ctrl;            // From registers of adxl362_regs.v
    wire [7:0]           intmap1;                // From registers of adxl362_regs.v
    wire [7:0]           intmap2;                // From registers of adxl362_regs.v
@@ -53,19 +57,52 @@ module adxl362 (/*AUTOARG*/
    wire [11:0]          ydata;
    wire [11:0]          zdata;
    wire [11:0]          temperature;
+   wire [7:0]           data_fifo;
+   wire [2:0]           odr;
+   wire [1:0]           fifo_mode;
+   wire                 fifo_enable;
+   wire                 fifo_temp;
+   wire                 fifo_empty;   
+   wire [7:0]           status;
+   reg                  data_ready = 0;
+   
+
+   assign odr = filter_ctrl[2:0];   
+   assign fifo_mode = fifo_ctrl[1:0];
+   assign fifo_enable = (fifo_ctrl[1:0] != 2'b00);
+   assign fifo_temp = fifo_ctrl[2];
+   assign status = {5'b0, ~fifo_empty, data_ready};
+
+   always @(posedge clk_16mhz) begin
+      //data_ready = fifo_enable & ~fifo_empty;
+      if (fifo_write) begin
+         data_ready <= 1;         
+      end
+
+      if (!write & ((address == `ADXL362_XDATA_LOW) |
+                    (address == `ADXL362_YDATA_LOW) |
+                    (address == `ADXL362_ZDATA_LOW) )
+          ) begin
+         data_ready <= 0;
+      end        
+   end
+   
    //
    // System Controller
    //
    // This module generates the 51.2 KHz clock used in the sytem.  This
    // module is not synthesizable.
    //
+
    adxl362_system_controller sys_con (/*AUTOINST*/
                                       // Outputs
                                       .clk              (clk),
                                       .clk_16mhz        (clk_16mhz),
                                       .reset            (reset),
+                                      .clk_odr          (clk_odr),
                                       // Inputs
-                                      .soft_reset       (soft_reset));
+                                      .soft_reset       (soft_reset),
+                                      .odr              (odr[2:0]));
 
 
    //
@@ -80,13 +117,15 @@ module adxl362 (/*AUTOARG*/
                    .MISO                (MISO),
                    .address             (address[5:0]),
                    .data_write          (data_write[7:0]),
+                   .data_fifo_read      (data_fifo_read),
                    .write               (write),
                    // Inputs
                    .SCLK                (SCLK),
                    .MOSI                (MOSI),
                    .nCS                 (nCS),
                    .clk_16mhz           (clk_16mhz),
-                   .data_read           (data_read[7:0]));
+                   .data_read           (data_read[7:0]),
+                   .data_fifo           (data_fifo[7:0]));
 
    //
    // Registers
@@ -116,7 +155,42 @@ module adxl362 (/*AUTOARG*/
                           .xdata                (xdata[11:0]),
                           .ydata                (ydata[11:0]),
                           .zdata                (zdata[11:0]),
-                          .temperature          (temperature[11:0]));
+                          .temperature          (temperature[11:0]),
+                          .status               (status[7:0]));
+   
+
+   //
+   // Data FIFO
+   //
+   
+   adxl362_fifo fifo(
+                     // Outputs
+                     .data_rd           (data_fifo),
+                     .fifo_empty        (fifo_empty),
+                     // Inputs
+                     .read              (read),
+                     .write             (fifo_write),
+                     .flush             (1'b0),
+                     .data_wr           (fifo_write_data),
+                     .clk_read          (clk_16mhz),
+                     .enable            (fifo_enable));
+
+   //
+   // Accelerometer
+   //
+   adxl362_accelerometer accelerometer (/*AUTOINST*/
+                                        // Outputs
+                                        .fifo_write     (fifo_write),
+                                        .fifo_write_data(fifo_write_data[15:0]),
+                                        .xdata          (xdata[11:0]),
+                                        .ydata          (ydata[11:0]),
+                                        .zdata          (zdata[11:0]),
+                                        .temperature    (temperature[11:0]),
+                                        // Inputs
+                                        .clk_16mhz      (clk_16mhz),
+                                        .clk_odr        (clk_odr),
+                                        .fifo_mode      (fifo_mode[1:0]),
+                                        .fifo_temp      (fifo_temp));
    
    
 endmodule // adxl362

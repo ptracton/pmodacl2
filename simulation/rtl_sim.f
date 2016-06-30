@@ -30,4 +30,5 @@
 ../behavioral/adxl362/adxl362_system_controller.v
 ../behavioral/adxl362/adxl362_spi.v
 ../behavioral/adxl362/adxl362_regs.v      
-../behavioral/adxl362/adxl362_fifo.v      
+../behavioral/adxl362/adxl362_fifo.v
+../behavioral/adxl362/adxl362_accelerometer.v      

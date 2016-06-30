@@ -12,9 +12,9 @@
 
 module adxl362_spi (/*AUTOARG*/
    // Outputs
-   MISO, address, data_write, write,
+   MISO, address, data_write, data_fifo_read, write,
    // Inputs
-   SCLK, MOSI, nCS, clk_16mhz, data_read
+   SCLK, MOSI, nCS, clk_16mhz, data_read, data_fifo
    ) ;
    input wire SCLK;
    input wire MOSI;
@@ -25,6 +25,8 @@ module adxl362_spi (/*AUTOARG*/
    output reg [5:0] address;
    output reg [7:0] data_write;
    input wire [7:0] data_read;
+   input wire [7:0] data_fifo;  
+   output reg       data_fifo_read;   
    output reg       write;
 
    /*AUTOWIRE*/
@@ -57,22 +59,24 @@ module adxl362_spi (/*AUTOARG*/
         spi_data_in <= {spi_data_in[6:0], MOSI};   
         MISO <= spi_data_out[7-bit_count];        
      end
-   wire write_fifo = (bit_count == 0) && (bit_count_previous == 7);
+   wire write_fifo = (bit_count == 0) && (bit_count_previous == 7);//& !flush;
    reg  write_fifo_delay;
 
    always @(posedge clk_16mhz)
      write_fifo_delay <= write_fifo;
    
-   adxl362_fifo spi_data_received_fifo(
-                                       // Outputs
-                                       .data_rd         (data_rd[7:0]),
-                                       .fifo_empty      (fifo_empty),
-                                       // Inputs
-                                       .clk_read        (clk_16mhz),
-                                       .flush           (flush),
-                                       .read            (read_fifo),
-                                       .write           (write_fifo),
-                                       .data_wr         (spi_data_in[7:0]));
+   adxl362_fifo #(.WIDTH(8),.DEPTH(8))
+   spi_data_received_fifo(
+                          // Outputs
+                          .data_rd         (data_rd[7:0]),
+                          .fifo_empty      (fifo_empty),
+                          // Inputs
+                          .enable          (1'b1),
+                          .clk_read        (clk_16mhz),
+                          .flush           (flush),
+                          .read            (read_fifo),
+                          .write           (write_fifo),
+                          .data_wr         (spi_data_in[7:0]));
    
    
 
@@ -106,7 +110,8 @@ module adxl362_spi (/*AUTOARG*/
         STATE_IDLE: begin
            read_fifo = 0;
            flush_fifo = 0;  
-           write = 0;           
+           write = 0;    
+           data_fifo_read = 0;        
            if (fifo_empty == 0)begin
               next_state = STATE_READ_COMMAND;               
            end else begin
@@ -125,6 +130,7 @@ module adxl362_spi (/*AUTOARG*/
            if (nCS) begin
               next_state = STATE_FINISH;              
            end else if (fifo_empty == 0) begin
+              first = 0;              
               next_state = STATE_READ_ADDRESS;              
            end else begin
               next_state = STATE_WAIT_ADDRESS;              
@@ -132,8 +138,13 @@ module adxl362_spi (/*AUTOARG*/
         end
         
         STATE_READ_ADDRESS: begin
-           read_fifo = 1;           
-           address = data_rd;
+           if (first == 0) begin
+              read_fifo = 1;           
+              address = data_rd;
+              first = 1;              
+           end else begin
+              read_fifo = 0;              
+           end
            if (nCS) begin
               next_state = STATE_FINISH;              
            end else begin

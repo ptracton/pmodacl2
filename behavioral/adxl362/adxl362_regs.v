@@ -18,7 +18,7 @@ module adxl362_regs (/*AUTOARG*/
    intmap2, filter_ctrl, power_ctrl, self_test,
    // Inputs
    clk_16mhz, write, address, data_write, xdata, ydata, zdata,
-   temperature
+   temperature, status
    ) ;
 
    input wire clk_16mhz;   
@@ -44,6 +44,7 @@ module adxl362_regs (/*AUTOARG*/
    input wire [11:0] ydata;
    input wire [11:0] zdata;
    input wire [11:0] temperature;
+   input wire [7:0]  status;
    
    
    //
@@ -58,7 +59,7 @@ module adxl362_regs (/*AUTOARG*/
         `ADXL362_XDATA:     data_read = xdata[11:3];
         `ADXL362_YDATA:     data_read = ydata[11:3];
         `ADXL362_ZDATA:     data_read = zdata[11:3];
-        `ADXL362_STATUS:    data_read = 0;
+        `ADXL362_STATUS:    data_read = status;
         `ADXL362_FIFO_ENTRIES_LOW: data_read = 0;
         `ADXL362_FIFO_ENTRIES_HIGH: data_read = 0;
         `ADXL362_XDATA_LOW:  data_read = xdata[7:0];

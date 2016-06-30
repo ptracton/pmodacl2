@@ -10,16 +10,18 @@
 
 module adxl362_system_controller (/*AUTOARG*/
    // Outputs
-   clk, clk_16mhz, reset,
+   clk, clk_16mhz, reset, clk_odr,
    // Inputs
-   soft_reset
+   soft_reset, odr
    ) ;
 
    output reg clk;
    output reg clk_16mhz;
    output wire reset;
    input wire soft_reset;
-
+   output wire clk_odr;
+   input wire [2:0] odr;
+   
    //
    // Reset Logic
    //
@@ -54,7 +56,81 @@ module adxl362_system_controller (/*AUTOARG*/
    initial begin
       clk_16mhz <= 1'b0;
       forever begin
-         #31 clk_16mhz <= ~clk_16mhz;         
+         #31 clk_16mhz <= ~clk_16mhz;
       end
    end
+
+   //
+   // 12.5Hz ODR Clk
+   //
+   reg clk_12_5_Hz;
+   initial begin
+      clk_12_5_Hz <= 0;
+      forever begin
+         #40000000 clk_12_5_Hz <= ~clk_12_5_Hz;         
+      end
+   end   
+
+   //
+   // 25Hz ODR Clk
+   //
+   reg clk_25_Hz;
+   initial begin
+      clk_25_Hz <= 0;
+      forever begin
+         #20000000 clk_25_Hz <= ~clk_25_Hz;         
+      end
+   end
+
+   //
+   // 50Hz ODR Clk
+   //
+   reg clk_50_Hz;
+   initial begin
+      clk_50_Hz <= 0;
+      forever begin
+         #10000000 clk_50_Hz <= ~clk_50_Hz;         
+      end
+   end      
+
+
+   //
+   // 100Hz ODR Clk
+   //
+   reg clk_100_Hz;
+   initial begin
+      clk_100_Hz <= 0;
+      forever begin
+         #5000000 clk_100_Hz <= ~clk_100_Hz;         
+      end
+   end   
+
+   //
+   // 200Hz ODR Clk
+   //
+   reg clk_200_Hz;
+   initial begin
+      clk_200_Hz <= 0;
+      forever begin
+         #2500000 clk_200_Hz <= ~clk_200_Hz;         
+      end
+   end   
+
+   //
+   // 200Hz ODR Clk
+   //
+   reg clk_400_Hz;
+   initial begin
+      clk_400_Hz <= 0;
+      forever begin
+         #1250000 clk_400_Hz <= ~clk_400_Hz;         
+      end
+   end   
+
+   assign clk_odr = (odr == 3'b000) ? clk_12_5_Hz:
+                    (odr == 3'b001) ? clk_25_Hz:
+                    (odr == 3'b010) ? clk_50_Hz:
+                    (odr == 3'b011) ? clk_100_Hz:
+                    (odr == 3'b100) ? clk_200_Hz: clk_400_Hz;   
+                    
 endmodule // adxl362_system_controller

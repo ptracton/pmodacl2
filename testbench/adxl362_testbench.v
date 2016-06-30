@@ -79,16 +79,16 @@ module adxl362_testbench (/*AUTOARG*/ ) ;
                       .miso_i(miso)   // MasterIn SlaveOut
                       );
    
-   adxl362 accelerometer(
-                         .SCLK(sck),
-                         .MOSI(mosi),
-                         .nCS(ncs),
-                         .MISO(miso),
-                         .INT1(int1),
-                         .INT2(int2)                         
-                         );
+   adxl362 adxl362(
+                   .SCLK(sck),
+                   .MOSI(mosi),
+                   .nCS(ncs),
+                   .MISO(miso),
+                   .INT1(int1),
+                   .INT2(int2)                         
+                   );
    
-
+   
    //
    // Tasks used to interface with ADXL362
    //

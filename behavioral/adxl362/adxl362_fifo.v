@@ -12,22 +12,26 @@ module adxl362_fifo (/*AUTOARG*/
    // Outputs
    data_rd, fifo_empty,
    // Inputs
-   read, write, flush, data_wr, clk_read
+   read, write, flush, data_wr, clk_read, enable
    ) ;
-
+   parameter WIDTH = 16;
+   parameter DEPTH = 512;
+   parameter INDEX_WIDTH = $clog2(DEPTH);
+   
    input wire read;
    input wire write;
    input wire flush;   
-   input wire [7:0] data_wr;
-   output wire [7:0] data_rd;
-   output wire       fifo_empty;
-   input wire        clk_read;
+   input wire [WIDTH-1:0] data_wr;
+   output wire [WIDTH-1:0] data_rd;
+   output wire             fifo_empty;
+   input wire              clk_read;
+   input wire              enable;
    
-
-   reg [7:0]         fifo [0:511];
-   reg [8:0]         read_ptr = 0;
-   reg [8:0]         write_ptr = 0;
-
+   
+   reg [WIDTH-1:0]         fifo [0:DEPTH-1];
+   reg [INDEX_WIDTH-1:0]   read_ptr = 0;
+   reg [INDEX_WIDTH-1:0]   write_ptr = 0;
+   
    //
    // If the pointers are the same the FIFO is empty.
    // Outside blocks should operate on this signal going low
@@ -48,10 +52,10 @@ module adxl362_fifo (/*AUTOARG*/
    // around since it is a 32 element fifo with a 5 bit pointer
    //
    always @(posedge write) begin
-//      if (!flush) begin
+      if (enable) begin
          fifo[write_ptr] <= data_wr;
          write_ptr <= write_ptr + 1;
-//      end
+      end
    end
 
    //
@@ -60,7 +64,7 @@ module adxl362_fifo (/*AUTOARG*/
    // around since it is a 32 element fifo with a 5 bit pointer
    //   
    always @(posedge clk_read) begin
-      if (read & !flush) begin
+      if (read & !flush & enable) begin
          read_ptr <= read_ptr + 1;
       end
    end

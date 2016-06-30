@@ -87,7 +87,7 @@ module test_case (/*AUTOARG*/ ) ;
       $display("MEM 13: 0x%x", read_mem[111:104]);
  -----/\----- EXCLUDED -----/\----- */
 
-      repeat(100) @(posedge `WB_CLK);
+      repeat(10) @(posedge `WB_CLK);
       `TEST_COMPLETE;      
    end
 

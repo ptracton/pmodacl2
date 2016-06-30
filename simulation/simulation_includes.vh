@@ -14,6 +14,9 @@
 `define WB_RST      `TB.wb_rst
 `define WB_CLK      `TB.wb_clk
 
+`define ADXL362     `TB.adxl362
+`define ADXL362_ACCELEROMETER `ADXL362.accelerometer
+
 `define TEST_CASE       `TB.test_case
 `define SIMULATION_NAME `TEST_CASE.simulation_name
 `define NUMBER_OF_TESTS `TEST_CASE.number_of_tests
