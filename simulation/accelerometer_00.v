@@ -36,7 +36,8 @@ module test_case ();
       @(posedge `WB_RST);
       @(negedge `WB_RST);
       @(posedge `WB_CLK);
-
+      @(negedge `ADXL362_RESET);
+      
       `SIMPLE_SPI_INIT;
 
       //

@@ -97,11 +97,14 @@ module adxl362_spi (/*AUTOARG*/
 
        WR_DONE:begin
           write_fifo = 0;
+          wr_next_state = WR_IDLE;
+/* -----\/----- EXCLUDED -----\/-----
           if ((bit_count == 1) && (bit_count_previous == 0)) begin
              wr_next_state = WR_IDLE;             
           end else begin
              wr_next_state = WR_DONE;             
           end
+ -----/\----- EXCLUDED -----/\----- */
        end
        default:
          wr_next_state = WR_IDLE;              
@@ -193,6 +196,8 @@ module adxl362_spi (/*AUTOARG*/
            end           
            if (! empty_fifo) begin
               next_state = STATE_READ_ADDRESS;
+              address = data_rd;
+              spi_data_out = data_read;  
               first = 1;              
            end else begin
               next_state = STATE_WAIT_ADDRESS;              
@@ -204,9 +209,9 @@ module adxl362_spi (/*AUTOARG*/
               terminate_transaction = 1;    
               next_state = STATE_FINISH;                         
            end
-           address = data_rd;
+//           address = data_rd;
            read_fifo = 1;
-           first = 0;           
+           first = 0;
            next_state = STATE_DONE_ADDRESS;           
         end
 
@@ -233,10 +238,12 @@ module adxl362_spi (/*AUTOARG*/
            
            if (write_fifo) begin
               read_fifo = 1;
-              next_state =STATE_DONE_REGISTER;              
+              first = 1;  
+             // next_state =STATE_DONE_REGISTER;
+              next_state = STATE_INCREMENT_ADDRESS;              
            end else begin
               read_fifo = 0;  
-              next_state = STATE_RESPOND_DATA;              
+              next_state = STATE_RESPOND_DATA;
            end
         end
         
@@ -248,8 +255,13 @@ module adxl362_spi (/*AUTOARG*/
            if (nCS == 1) begin
               terminate_transaction = 1;              
            end 
-           if (! empty_fifo) begin
-              next_state = STATE_WRITE_REGISTER;
+//           if (! empty_fifo) begin
+           if (write_fifo) begin
+              data_write = spi_data_in;
+              write = 1;
+              read_fifo = 1;              
+//              next_state = STATE_WRITE_REGISTER;
+              next_state = STATE_DONE_REGISTER;
               first = 1;              
            end else begin
               next_state = STATE_WAIT_DATA;              
@@ -258,12 +270,13 @@ module adxl362_spi (/*AUTOARG*/
         end
         
         STATE_WRITE_REGISTER: begin
-           data_write = data_rd;
+//           data_write = data_rd;
            read_fifo = 1;
            write = 1;          
            if (nCS == 1) begin
               terminate_transaction = 1;              
-           end 
+           end
+           first = 1;  
            next_state = STATE_DONE_REGISTER;
         end        
 
@@ -279,10 +292,13 @@ module adxl362_spi (/*AUTOARG*/
 
         STATE_INCREMENT_ADDRESS: begin
            if (first ) begin
-              address = address + 1;
+              write = 0;
+              read_fifo = 0;
+              address = address + 1;  
+              spi_data_out = data_read;             
               first = 0;              
            end
-           if (terminate_transaction) begin
+           if (terminate_transaction || nCS) begin
               next_state = STATE_FINISH;              
            end else begin
               if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_DATA;           
@@ -298,12 +314,14 @@ module adxl362_spi (/*AUTOARG*/
            first = 0;           
            flush_fifo = 1;
            terminate_transaction = 0;           
+/* -----\/----- EXCLUDED -----\/-----
            if (finish == 0) begin
               finish = 1;              
               next_state = STATE_FINISH;     
            end else begin
+ -----/\----- EXCLUDED -----/\----- */
               next_state = STATE_IDLE;
-           end
+           //end
         end
         
         default: begin

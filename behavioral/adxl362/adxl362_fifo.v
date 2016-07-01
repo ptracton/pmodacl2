@@ -74,7 +74,7 @@ module adxl362_fifo (/*AUTOARG*/
    //
    // Store data in the FIFO
    //
-   always @(posedge clk)
+   always @(posedge write)
      if (write) begin
         fifo[write_ptr] <= data_write;        
      end

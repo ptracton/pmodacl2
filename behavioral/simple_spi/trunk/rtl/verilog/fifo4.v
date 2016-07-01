@@ -75,13 +75,13 @@ output		full, empty;
 //
 
 reg     [dw:1]	mem[0:3];
-reg     [1:0]   wp;
-reg     [1:0]   rp;
+reg     [1:0]   wp=0;
+reg     [1:0]   rp=0;
 wire    [1:0]   wp_p1;
 wire    [1:0]   wp_p2;
 wire    [1:0]   rp_p1;
 wire		full, empty;
-reg		gb;
+reg		gb=0;
 
 ////////////////////////////////////////////////////////////////////
 //

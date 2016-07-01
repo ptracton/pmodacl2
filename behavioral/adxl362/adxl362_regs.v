@@ -77,7 +77,7 @@ module adxl362_regs (/*AUTOARG*/
         `ADXL362_THRESH_INACT_LOW: data_read =  threshold_inactive[07:00];
         `ADXL362_THRESH_INACT_HIGH: data_read = threshold_inactive[10:08];
         `ADXL362_TIME_INACT_LOW: data_read = time_inactive[7:0];
-        `ADXL362_TIME_INACT_HIGH: data_read = {5'b0, time_inactive[10:08]};
+        `ADXL362_TIME_INACT_HIGH: data_read = time_inactive[15:08];
         `ADXL362_ACT_INACT_CTL: data_read = 0;
         `ADXL362_FIFO_CONTROL: data_read = fifo_ctrl;
         `ADXL362_FIFO_SAMPLES: data_read = fifo_samples;
