@@ -10,73 +10,120 @@
 
 module adxl362_fifo (/*AUTOARG*/
    // Outputs
-   data_rd, fifo_empty,
+   data_read, full, empty,
    // Inputs
-   read, write, flush, data_wr, clk_read, enable
+   data_write, clk, rst, flush, read, write
    ) ;
    parameter WIDTH = 16;
    parameter DEPTH = 512;
    parameter INDEX_WIDTH = $clog2(DEPTH);
+
+   output wire [WIDTH-1:0] data_read;
+   output wire             full;
+   output wire             empty;
    
-   input wire read;
-   input wire write;
-   input wire flush;   
-   input wire [WIDTH-1:0] data_wr;
-   output wire [WIDTH-1:0] data_rd;
-   output wire             fifo_empty;
-   input wire              clk_read;
-   input wire              enable;
+   input wire [WIDTH-1:0]  data_write;
+   input wire              clk;
+   input wire              rst;
+   input wire              flush;
+   input wire              read;
+   input wire              write;   
    
    
+
+   //
+   // This is the memory that holds the data
+   //
    reg [WIDTH-1:0]         fifo [0:DEPTH-1];
-   reg [INDEX_WIDTH-1:0]   read_ptr = 0;
-   reg [INDEX_WIDTH-1:0]   write_ptr = 0;
+
+   //
+   // Pointer of where to read from the fifo memory
+   //
+   reg [INDEX_WIDTH-1:0]   read_ptr;
+   wire [INDEX_WIDTH-1:0]  read_ptr1;
+
+   //
+   // Pointer to where to write to the fifo memory
+   //    
+   reg [INDEX_WIDTH-1:0]   write_ptr;
+   wire [INDEX_WIDTH-1:0]  write_ptr1;
+
+   //
+   // Guarding bit for the empty/full wrap around situation
+   //
+   reg                     guard;
+
+   //
+   // On reset or flush, put the write pointer back to 0
+   // On a write register the pointer's next address
+   //
+   always @(posedge clk)
+     if (rst) begin
+        write_ptr <= 0;        
+     end else if (flush) begin
+        write_ptr <= 0;        
+     end else if (write) begin
+        write_ptr <= write_ptr1;        
+     end
+
+   //
+   // On a write this becomes the new write ptr
+   //
+   assign write_ptr1 = write_ptr + 1;
+
+   //
+   // Store data in the FIFO
+   //
+   always @(posedge clk)
+     if (write) begin
+        fifo[write_ptr] <= data_write;        
+     end
    
    //
-   // If the pointers are the same the FIFO is empty.
-   // Outside blocks should operate on this signal going low
-   // which will indicate there is data in FIFO.
+   // On reset or flush, put the write pointer back to 0
+   // On a read register the pointer's next address
    //
-   assign fifo_empty = (read_ptr == write_ptr);
+   always @(posedge clk)
+     if (rst) begin
+        read_ptr <= 0;        
+     end else if (flush) begin
+        read_ptr <= 0;        
+     end else if (read) begin
+        read_ptr <= read_ptr1;        
+     end
 
    //
-   // Always present the read data as soon as the pointer
-   // is updated.  This allows the outside blocks to read when
-   // easy for them.
+   // Pointer to the next read location
    //
-   assign data_rd = fifo[read_ptr];
+   assign read_ptr1 = read_ptr + 1;
 
    //
-   // Write the data into the FIFO
-   // Increment pointer.  The pointer will automatically wrap
-   // around since it is a 32 element fifo with a 5 bit pointer
+   // Always present the latest data to be read by the next block
    //
-   always @(posedge write) begin
-      if (enable) begin
-         fifo[write_ptr] <= data_wr;
-         write_ptr <= write_ptr + 1;
-      end
-   end
+   assign data_read = fifo[read_ptr];
 
    //
-   // Read pointer increment
-   // Increment pointer.  The pointer will automatically wrap
-   // around since it is a 32 element fifo with a 5 bit pointer
-   //   
-   always @(posedge clk_read) begin
-      if (read & !flush & enable) begin
-         read_ptr <= read_ptr + 1;
-      end
-   end
+   // Guard Bit Logic
+   //
+   always @(posedge clk)
+     if (rst) begin
+        guard <= 0;        
+     end else if (flush) begin
+        guard <= 0;        
+     end else if ((write_ptr1 == read_ptr) && write) begin
+        guard <= 1;        
+     end else if (read) begin
+        guard <= 0;        
+     end
 
+   //
+   // Read the last element and we are now empty
+   //
+   assign empty = (write_ptr == read_ptr) & !guard;
 
    //
-   // Flush FIFO
+   // Wrote the last available location, now full
    //
-   // Dumps all data and resets the pointers
-   //
-   always @(posedge flush) begin
-      read_ptr <= 0;
-      write_ptr <= 0;      
-   end
+   assign full = (write_ptr == read_ptr) & guard;
+   
 endmodule // adxl362_fifo

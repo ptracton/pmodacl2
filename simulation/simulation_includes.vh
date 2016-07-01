@@ -16,6 +16,8 @@
 
 `define ADXL362     `TB.adxl362
 `define ADXL362_ACCELEROMETER `ADXL362.accelerometer
+`define ADXL362_SPI_FIFO `ADXL362.spi.fifo
+`define ADXL362_RESET `ADXL362.rst
 
 `define TEST_CASE       `TB.test_case
 `define SIMULATION_NAME `TEST_CASE.simulation_name

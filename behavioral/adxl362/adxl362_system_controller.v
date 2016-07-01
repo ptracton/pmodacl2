@@ -10,7 +10,7 @@
 
 module adxl362_system_controller (/*AUTOARG*/
    // Outputs
-   clk, clk_16mhz, reset, clk_odr,
+   clk, clk_16mhz, reset, clk_odr, rst,
    // Inputs
    soft_reset, odr
    ) ;
@@ -21,20 +21,21 @@ module adxl362_system_controller (/*AUTOARG*/
    input wire soft_reset;
    output wire clk_odr;
    input wire [2:0] odr;
+   output wire      rst;
    
    //
    // Reset Logic
    //
    reg [5:0]  reset_count = 0;
    reg        por = 1;
-   assign reset = |reset_count;
+   assign rst = |reset_count;
    
    always @(posedge clk_16mhz)
      if (por || soft_reset) begin
         reset_count <= 1;
         por <= 0;        
      end else begin
-        if (reset)
+        if (rst)
           reset_count <= reset_count + 1;        
      end
      

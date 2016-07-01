@@ -43,6 +43,7 @@ module adxl362 (/*AUTOARG*/
    wire [7:0]           intmap2;                // From registers of adxl362_regs.v
    wire [7:0]           power_ctrl;             // From registers of adxl362_regs.v
    wire                 reset;                  // From sys_con of adxl362_system_controller.v
+   wire                 rst;                    // From sys_con of adxl362_system_controller.v
    wire                 self_test;              // From registers of adxl362_regs.v
    wire [10:0]          threshold_active;       // From registers of adxl362_regs.v
    wire [10:0]          threshold_inactive;     // From registers of adxl362_regs.v
@@ -66,7 +67,9 @@ module adxl362 (/*AUTOARG*/
    wire [7:0]           status;
    reg                  data_ready = 0;
    wire [7:0]           data_fifo_read;   
+   wire [7:0]           data_read;
 
+   
    assign odr = filter_ctrl[2:0];   
    assign fifo_mode = fifo_ctrl[1:0];
    assign fifo_enable = (fifo_ctrl[1:0] != 2'b00);
@@ -100,6 +103,7 @@ module adxl362 (/*AUTOARG*/
                                       .clk_16mhz        (clk_16mhz),
                                       .reset            (reset),
                                       .clk_odr          (clk_odr),
+                                      .rst              (rst),
                                       // Inputs
                                       .soft_reset       (soft_reset),
                                       .odr              (odr[2:0]));
@@ -111,7 +115,6 @@ module adxl362 (/*AUTOARG*/
    // This module handles SPI communication with host CPU.  Register bus interface
    // is synched to the clk domain in this module!
    //
-   wire [7:0]           data_read;   
    adxl362_spi spi(/*AUTOINST*/
                    // Outputs
                    .MISO                (MISO),
@@ -125,7 +128,8 @@ module adxl362 (/*AUTOARG*/
                    .nCS                 (nCS),
                    .clk_16mhz           (clk_16mhz),
                    .data_read           (data_read[7:0]),
-                   .data_fifo_read      (data_fifo_read[7:0]));
+                   .data_fifo_read      (data_fifo_read[7:0]),
+                   .rst                 (rst));
 
    //
    // Registers
@@ -163,6 +167,7 @@ module adxl362 (/*AUTOARG*/
    // Data FIFO
    //
    
+/* -----\/----- EXCLUDED -----\/-----
    adxl362_fifo fifo(
                      // Outputs
                      .data_rd           (data_fifo),
@@ -174,6 +179,7 @@ module adxl362 (/*AUTOARG*/
                      .data_wr           (fifo_write_data),
                      .clk_read          (clk_16mhz),
                      .enable            (fifo_enable));
+ -----/\----- EXCLUDED -----/\----- */
 
    //
    // Accelerometer

@@ -37,7 +37,8 @@ module test_case (/*AUTOARG*/ ) ;
       @(posedge `WB_RST);
       @(negedge `WB_RST);
       @(posedge `WB_CLK);
-
+      @(negedge `ADXL362_RESET);
+      
       `SIMPLE_SPI_INIT;   
 
       `ADXL362_WRITE_DOUBLE_REGISTER(`ADXL362_THRESH_ACT_LOW, 16'h6507);
@@ -52,6 +53,7 @@ module test_case (/*AUTOARG*/ ) ;
       repeat(100) @(posedge `WB_CLK);
       
       `ADXL362_WRITE_BURST_REGISTERS(`ADXL362_THRESH_ACT_LOW, write_mem, 14);
+      repeat(50) @(posedge `WB_CLK);
       `ADXL362_READ_BURST_REGISTERS(`ADXL362_THRESH_ACT_LOW, read_mem, 14);
       //$display("Read Mem 0x%x", read_mem);
       
