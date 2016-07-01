@@ -17,7 +17,7 @@ module test_case ();
    // These parameters need to be set for each test case
    //
    parameter simulation_name = "accelerometer_00";
-   parameter number_of_tests = 2;
+   parameter number_of_tests = 16;
 
 
    defparam `ADXL362_ACCELEROMETER.XDATA_FILE = "accelerometer_00_xdata.txt";
@@ -54,7 +54,7 @@ module test_case ();
       repeat(5) @(posedge `WB_CLK);
       `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_XDATA_LOW, 16'h0001);
       `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_YDATA_LOW, 16'h0011);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_ZDATA_LOW, 16'h01f1);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_ZDATA_LOW, 16'h00f1);
       `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_TEMP_LOW,  16'h0047);
       while (data_out[8] ==1) begin
          repeat(100) @(posedge `WB_CLK);
@@ -80,10 +80,10 @@ module test_case ();
          `ADXL362_READ_REGISTER(`ADXL362_STATUS, data_out);
       end
       repeat(5) @(posedge `WB_CLK);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_XDATA_LOW, 16'h0000);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_YDATA_LOW, 16'h0000);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_ZDATA_LOW, 16'h0000);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_TEMP_LOW,  16'h0000);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_XDATA_LOW, 16'h0003);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_YDATA_LOW, 16'h0013);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_ZDATA_LOW, 16'h00F3);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_TEMP_LOW,  16'h0049);
       while (data_out[8] ==1) begin
          repeat(100) @(posedge `WB_CLK);
          `ADXL362_READ_REGISTER(`ADXL362_STATUS, data_out);
@@ -94,10 +94,10 @@ module test_case ();
          `ADXL362_READ_REGISTER(`ADXL362_STATUS, data_out);
       end
       repeat(5) @(posedge `WB_CLK);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_XDATA_LOW, 16'h0000);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_YDATA_LOW, 16'h0000);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_ZDATA_LOW, 16'h0000);
-      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_TEMP_LOW,  16'h0000);      
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_XDATA_LOW, 16'h0004);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_YDATA_LOW, 16'h0014);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_ZDATA_LOW, 16'h00F4);
+      `ADXL362_CHECK_DOUBLE_REGISTER(`ADXL362_TEMP_LOW,  16'h004A);      
       while (data_out[8] ==1) begin
          repeat(100) @(posedge `WB_CLK);
          `ADXL362_READ_REGISTER(`ADXL362_STATUS, data_out);

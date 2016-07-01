@@ -34,11 +34,13 @@ module adxl362 (/*AUTOARG*/
    wire                 clk_odr;                // From sys_con of adxl362_system_controller.v
    wire                 data_fifo_write;        // From spi of adxl362_spi.v
    wire [7:0]           data_write;             // From spi of adxl362_spi.v
+   wire                 empty;                  // From fifo of adxl362_fifo.v
    wire [3:0]           fifo_ctrl;              // From registers of adxl362_regs.v
    wire [7:0]           fifo_samples;           // From registers of adxl362_regs.v
    wire                 fifo_write;             // From accelerometer of adxl362_accelerometer.v
    wire [15:0]          fifo_write_data;        // From accelerometer of adxl362_accelerometer.v
    wire [7:0]           filter_ctrl;            // From registers of adxl362_regs.v
+   wire                 full;                   // From fifo of adxl362_fifo.v
    wire [7:0]           intmap1;                // From registers of adxl362_regs.v
    wire [7:0]           intmap2;                // From registers of adxl362_regs.v
    wire [7:0]           power_ctrl;             // From registers of adxl362_regs.v
@@ -66,7 +68,7 @@ module adxl362 (/*AUTOARG*/
    wire                 fifo_empty;   
    wire [7:0]           status;
    reg                  data_ready = 0;
-   wire [7:0]           data_fifo_read;   
+   wire [15:0]          data_fifo_read;   
    wire [7:0]           data_read;
 
    
@@ -74,7 +76,7 @@ module adxl362 (/*AUTOARG*/
    assign fifo_mode = fifo_ctrl[1:0];
    assign fifo_enable = (fifo_ctrl[1:0] != 2'b00);
    assign fifo_temp = fifo_ctrl[2];
-   assign status = {5'b0, ~fifo_empty, data_ready};
+   assign status = {5'b0, 1'b0, data_ready};
 
    always @(posedge clk_16mhz) begin
       //data_ready = fifo_enable & ~fifo_empty;
@@ -167,19 +169,20 @@ module adxl362 (/*AUTOARG*/
    // Data FIFO
    //
    
-/* -----\/----- EXCLUDED -----\/-----
+
    adxl362_fifo fifo(
                      // Outputs
-                     .data_rd           (data_fifo),
-                     .fifo_empty        (fifo_empty),
+                     .data_read         (data_fifo_read[15:0]),
+                     .full              (full),
+                     .empty             (empty),
                      // Inputs
-                     .read              (read),
-                     .write             (fifo_write),
+                     .data_write        (fifo_write_data),
+                     .clk               (clk_16mhz),
+                     .rst               (rst),
                      .flush             (1'b0),
-                     .data_wr           (fifo_write_data),
-                     .clk_read          (clk_16mhz),
-                     .enable            (fifo_enable));
- -----/\----- EXCLUDED -----/\----- */
+                     .read              (read),
+                     .write             (fifo_write));
+   
 
    //
    // Accelerometer

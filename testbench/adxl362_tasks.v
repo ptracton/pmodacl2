@@ -192,7 +192,7 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
          `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data, 4'h2, 1, 0, err);
                 
-         $display("ADXL362 Read Register REG=0x%x Data=0x%x @ %d", address, data, $time);
+         //$display("ADXL362 Read Register REG=0x%x Data=0x%x @ %d", address, data, $time);
 
          //
          // End CS
