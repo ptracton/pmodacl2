@@ -34,16 +34,15 @@ module adxl362 (/*AUTOARG*/
    wire                 clk_odr;                // From sys_con of adxl362_system_controller.v
    wire                 data_fifo_write;        // From spi of adxl362_spi.v
    wire [7:0]           data_write;             // From spi of adxl362_spi.v
-   wire                 empty;                  // From fifo of adxl362_fifo.v
    wire [3:0]           fifo_ctrl;              // From registers of adxl362_regs.v
    wire [7:0]           fifo_samples;           // From registers of adxl362_regs.v
    wire                 fifo_write;             // From accelerometer of adxl362_accelerometer.v
    wire [15:0]          fifo_write_data;        // From accelerometer of adxl362_accelerometer.v
    wire [7:0]           filter_ctrl;            // From registers of adxl362_regs.v
-   wire                 full;                   // From fifo of adxl362_fifo.v
    wire [7:0]           intmap1;                // From registers of adxl362_regs.v
    wire [7:0]           intmap2;                // From registers of adxl362_regs.v
    wire [7:0]           power_ctrl;             // From registers of adxl362_regs.v
+   wire                 read_data_fifo;         // From spi of adxl362_spi.v
    wire                 reset;                  // From sys_con of adxl362_system_controller.v
    wire                 rst;                    // From sys_con of adxl362_system_controller.v
    wire                 self_test;              // From registers of adxl362_regs.v
@@ -70,13 +69,14 @@ module adxl362 (/*AUTOARG*/
    reg                  data_ready = 0;
    wire [15:0]          data_fifo_read;   
    wire [7:0]           data_read;
-
+   wire                 empty;
+   
    
    assign odr = filter_ctrl[2:0];   
    assign fifo_mode = fifo_ctrl[1:0];
    assign fifo_enable = (fifo_ctrl[1:0] != 2'b00);
    assign fifo_temp = fifo_ctrl[2];
-   assign status = {5'b0, 1'b0, data_ready};
+   assign status = {5'b0, ~empty, data_ready};
 
    always @(posedge clk_16mhz) begin
       //data_ready = fifo_enable & ~fifo_empty;
@@ -124,13 +124,14 @@ module adxl362 (/*AUTOARG*/
                    .data_write          (data_write[7:0]),
                    .data_fifo_write     (data_fifo_write),
                    .write               (write),
+                   .read_data_fifo      (read_data_fifo),
                    // Inputs
                    .SCLK                (SCLK),
                    .MOSI                (MOSI),
                    .nCS                 (nCS),
                    .clk_16mhz           (clk_16mhz),
                    .data_read           (data_read[7:0]),
-                   .data_fifo_read      (data_fifo_read[7:0]),
+                   .data_fifo_read      (data_fifo_read[15:0]),
                    .rst                 (rst));
 
    //
@@ -180,7 +181,7 @@ module adxl362 (/*AUTOARG*/
                      .clk               (clk_16mhz),
                      .rst               (rst),
                      .flush             (1'b0),
-                     .read              (read),
+                     .read              (read_data_fifo),
                      .write             (fifo_write));
    
 

@@ -12,7 +12,7 @@
 
 module adxl362_spi (/*AUTOARG*/
    // Outputs
-   MISO, address, data_write, data_fifo_write, write,
+   MISO, address, data_write, data_fifo_write, write, read_data_fifo,
    // Inputs
    SCLK, MOSI, nCS, clk_16mhz, data_read, data_fifo_read, rst
    ) ;
@@ -25,11 +25,12 @@ module adxl362_spi (/*AUTOARG*/
    output reg [5:0] address;
    output reg [7:0] data_write;
    input wire [7:0] data_read;
-   input wire [7:0] data_fifo_read;  
+   input wire [15:0] data_fifo_read;  
    output reg       data_fifo_write;   
    output reg       write;
    input wire       rst;
-   
+   output reg       read_data_fifo;
+      
    /*AUTOWIRE*/
 
    /*AUTOREG*/
@@ -98,13 +99,6 @@ module adxl362_spi (/*AUTOARG*/
        WR_DONE:begin
           write_fifo = 0;
           wr_next_state = WR_IDLE;
-/* -----\/----- EXCLUDED -----\/-----
-          if ((bit_count == 1) && (bit_count_previous == 0)) begin
-             wr_next_state = WR_IDLE;             
-          end else begin
-             wr_next_state = WR_DONE;             
-          end
- -----/\----- EXCLUDED -----/\----- */
        end
        default:
          wr_next_state = WR_IDLE;              
@@ -125,25 +119,29 @@ module adxl362_spi (/*AUTOARG*/
          .write            (write_fifo));
    
    
-   parameter STATE_IDLE              = 4'h0;
-   parameter STATE_READ_COMMAND      = 4'h1;
-   parameter STATE_DONE_COMMAND      = 4'h2;   
-   parameter STATE_WAIT_ADDRESS      = 4'h3; 
-   parameter STATE_READ_ADDRESS      = 4'h4;
-   parameter STATE_DONE_ADDRESS      = 4'h5; 
-   parameter STATE_WAIT_DATA         = 4'h6; 
-   parameter STATE_READ_DATA         = 4'h7;
-   parameter STATE_DONE_DATA         = 4'h8;
-   parameter STATE_READ_REGISTER     = 4'h9;   
-   parameter STATE_WRITE_REGISTER    = 4'hA;
-   parameter STATE_DONE_REGISTER     = 4'hB;
-   parameter STATE_READ_FIFO         = 4'hC;
-   parameter STATE_INCREMENT_ADDRESS = 4'hD;
-   parameter STATE_FINISH            = 4'hE;
-   parameter STATE_RESPOND_DATA      = 4'hF;
+   parameter STATE_IDLE              = 5'h00;
+   parameter STATE_READ_COMMAND      = 5'h01;
+   parameter STATE_DONE_COMMAND      = 5'h02;   
+   parameter STATE_WAIT_ADDRESS      = 5'h03; 
+   parameter STATE_READ_ADDRESS      = 5'h04;
+   parameter STATE_DONE_ADDRESS      = 5'h5; 
+   parameter STATE_WAIT_DATA         = 5'h06; 
+   parameter STATE_READ_DATA         = 5'h07;
+   parameter STATE_DONE_DATA         = 5'h08;
+   parameter STATE_READ_REGISTER     = 5'h09;   
+   parameter STATE_WRITE_REGISTER    = 5'h0A;
+   parameter STATE_DONE_REGISTER     = 5'h0B;
+   parameter STATE_READ_FIFO         = 5'h0C;
+   parameter STATE_INCREMENT_ADDRESS = 5'h0D;
+   parameter STATE_FINISH            = 5'h0E;
+   parameter STATE_RESPOND_DATA      = 5'h0F;
+   parameter STATE_SEND_FIFO_DATA_LOW = 5'h10;
+   parameter STATE_SEND_FIFO_DATA_HI  = 5'h11;
+   parameter STATE_FIFO_DONE          = 5'h12;
+
    
-   reg [3:0] state = STATE_IDLE;   
-   reg [3:0] next_state = STATE_IDLE;      
+   reg [4:0] state = STATE_IDLE;   
+   reg [4:0] next_state = STATE_IDLE;      
    reg       first = 0;
    reg       finish = 0;
    reg       terminate_transaction =0;
@@ -161,6 +159,8 @@ module adxl362_spi (/*AUTOARG*/
            finish = 0;           
            spi_data_out = 0;
            terminate_transaction = 0;
+           read_data_fifo =0;
+           
            if (! empty_fifo) begin
               next_state = STATE_READ_COMMAND;
               first = 1;              
@@ -186,7 +186,10 @@ module adxl362_spi (/*AUTOARG*/
            end           
            read_fifo = 0;
            first = 0;           
-           next_state = STATE_WAIT_ADDRESS;           
+           next_state = STATE_WAIT_ADDRESS;    
+           if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_ADDRESS;           
+           else if (`ADXL362_COMMAND_READ == command)  next_state = STATE_WAIT_ADDRESS;
+           else if (`ADXL362_COMMAND_FIFO == command)  next_state = STATE_READ_FIFO;       
         end
         
         STATE_WAIT_ADDRESS: begin
@@ -222,7 +225,6 @@ module adxl362_spi (/*AUTOARG*/
            end
            if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_DATA;           
            else if (`ADXL362_COMMAND_READ == command)  next_state = STATE_READ_DATA;
-           else if (`ADXL362_COMMAND_FIFO == command)  next_state = STATE_READ_FIFO;
            else next_state = STATE_FINISH;           
         end
         
@@ -248,9 +250,49 @@ module adxl362_spi (/*AUTOARG*/
         end
         
         STATE_READ_FIFO: begin
-                 
+           read_data_fifo = 0;
+           spi_data_out = data_fifo_read[7:0];
+           if (nCS == 1) begin
+              terminate_transaction = 1;  
+           end           
+           next_state = STATE_SEND_FIFO_DATA_LOW;
+           
         end
 
+        STATE_SEND_FIFO_DATA_LOW: begin
+           if (nCS == 1) begin
+              terminate_transaction = 1;  
+           end           
+           read_data_fifo = 0;
+           if (write_fifo) begin
+              if (terminate_transaction) begin
+                 next_state = STATE_FINISH;
+              end else begin
+                 spi_data_out = data_fifo_read[15:08];
+                 next_state = STATE_SEND_FIFO_DATA_HI;
+              end
+           end else begin
+              next_state = STATE_SEND_FIFO_DATA_LOW;              
+           end
+        end
+
+        STATE_SEND_FIFO_DATA_HI: begin
+           if (nCS == 1) begin
+              terminate_transaction = 1;  
+           end           
+           read_data_fifo = 0;
+           if (write_fifo) begin
+              read_data_fifo = 1;
+              if (terminate_transaction) begin
+                 next_state = STATE_FINISH;
+              end else begin
+                 next_state = STATE_READ_FIFO;
+              end
+           end else begin
+              next_state = STATE_SEND_FIFO_DATA_HI;              
+           end
+        end
+        
         STATE_WAIT_DATA:begin
            if (nCS == 1) begin
               terminate_transaction = 1;              
@@ -313,14 +355,19 @@ module adxl362_spi (/*AUTOARG*/
            read_fifo = 0;
            first = 0;           
            flush_fifo = 1;
-           terminate_transaction = 0;           
+           terminate_transaction = 0;  
+           read_data_fifo = 0;         
 /* -----\/----- EXCLUDED -----\/-----
            if (finish == 0) begin
               finish = 1;              
               next_state = STATE_FINISH;     
            end else begin
  -----/\----- EXCLUDED -----/\----- */
+           if (nCS) begin
+              next_state = STATE_FINISH;
+           end else begin
               next_state = STATE_IDLE;
+           end
            //end
         end
         
@@ -349,7 +396,10 @@ module adxl362_spi (/*AUTOARG*/
        STATE_DONE_REGISTER: state_name = "Write Done Register";
        STATE_INCREMENT_ADDRESS: state_name = "Increment Address";
        STATE_FINISH: state_name = "State Finish";  
-       STATE_RESPOND_DATA: state_name = "Respond Data";       
+       STATE_RESPOND_DATA: state_name = "Respond Data";
+       STATE_SEND_FIFO_DATA_LOW: state_name = "Send FIFO Data Low";
+       STATE_SEND_FIFO_DATA_HI: state_name = "Send FIFO Data High";
+       STATE_FIFO_DONE: state_name = "FIFO Done";              
        default: state_name = "DEFAULT!";
        
      endcase // case (state)

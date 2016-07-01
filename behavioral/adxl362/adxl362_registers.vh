@@ -5,7 +5,7 @@
 `define ADXL362_XDATA             8'h08
 `define ADXL362_YDATA             8'h09
 `define ADXL362_ZDATA             8'h0A
-`define ADXL362_STATUS            8'h0B
+`define ADXL362_STATUS            8'h33
 `define ADXL362_FIFO_ENTRIES_LOW  8'h0C
 `define ADXL362_FIFO_ENTRIES_HIGH 8'h0D
 `define ADXL362_XDATA_LOW         8'h0E

@@ -210,7 +210,7 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
       integer      ii;
       
       begin
-     @(posedge `WB_CLK);
+         @(posedge `WB_CLK);
          `ADXL362_NCS = 1;         
          $display("ADXL362 Read Register REG=0x%x Count=0x%x @ %d", address, count, $time);
          @(posedge `WB_CLK);
@@ -271,5 +271,48 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          `TEST_COMPARE("Compare Register", expected, {data_high[15:08], data_low[15:08]});         
       end      
    endtask // 
+
+   task read_burst_fifo;
+      output [(16*7):0] data;
+      input [31:0]      count;
+      integer           ii;
+
+      begin
+         
+         @(posedge `WB_CLK);
+         `ADXL362_NCS = 1;         
+         $display("ADXL362 Read FIFO  Count=0x%x @ %d", count, $time);
+         @(posedge `WB_CLK);
+         `ADXL362_NCS = 0;
+         
+         @(posedge `WB_CLK);
+         `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, {16'h0,`ADXL362_COMMAND_FIFO, 8'h0}, 4'h2, 1, 0, err);         
+         @(posedge `SIMPLE_SPI_IRQ);
+         `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
+         `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
+         
+         for (ii=0; ii<count; ii=ii+1) begin
+            @(posedge `WB_CLK);
+            `TB.master_bfm.write_burst(`SPI_DATA_REG_ADDRESS, 0, 4'h2, 1, 0, err);
+            @(posedge `SIMPLE_SPI_IRQ);
+            `TB.master_bfm.write_burst(`SPI_STATUS_REG_ADDRESS, 32'h0080_0000, 4'h4, 1, 0, err);
+            `TB.master_bfm.read_burst(`SPI_DATA_REG_ADDRESS, data_out, 4'h2, 1, 0, err);
+            
+            data[(ii*8)+7 -: 8] = data_out[15:8];           
+
+         end         
+         
+         @(posedge `WB_CLK);         
+         `ADXL362_NCS = 1;
+         repeat(5)  @(posedge `WB_CLK);         
+         
+         
+      end // initial begin
+   
+      
+   endtask //
+   
+     
+   
    
 endmodule // adxl362_tasks
