@@ -89,27 +89,32 @@ module adxl362_regs (/*AUTOARG*/
         default: data_read = 0;        
       endcase // case (address)      
    end
-   
+    
    //
    // Write to the registers
    //
-   always @(posedge write) begin
-      case (address)
-        `ADXL362_THRESH_ACT_LOW:    threshold_active[07:00] = data_write;        
-        `ADXL362_THRESH_ACT_HIGH:   threshold_active[10:08] = data_write[2:0];
-        `ADXL362_TIME_ACT:          time_active[07:00] = data_write;
-        `ADXL362_THRESH_INACT_LOW:  threshold_inactive[07:00] = data_write;
-        `ADXL362_THRESH_INACT_HIGH: threshold_inactive[10:08] = data_write[2:0]; 
-        `ADXL362_TIME_INACT_LOW:    time_inactive[7:0] = data_write;
-        `ADXL362_TIME_INACT_HIGH:   time_inactive[15:8] = data_write;
-        `ADXL362_FIFO_CONTROL:      fifo_ctrl = data_write;
-        `ADXL362_FIFO_SAMPLES:      fifo_samples= data_write;
-        `ADXL362_INTMAP1:           intmap1 = data_write;
-        `ADXL362_INTMAP2:           intmap2 = data_write;
-        `ADXL362_FILTER_CTL:        filter_ctrl = data_write;
-        `ADXL362_POWER_CTL:         power_ctrl = data_write;
-        `ADXL362_SELF_TEST:         self_test = data_write[0];        
-      endcase // case (address)
-   end   
+   //   always @(posedge write) begin
+   always @(posedge clk_16mhz) begin
+      if (write) begin
+         case (address)
+           `ADXL362_THRESH_ACT_LOW:    threshold_active[07:00] = data_write;        
+           `ADXL362_THRESH_ACT_HIGH:   threshold_active[10:08] = data_write[2:0];
+           `ADXL362_TIME_ACT:          time_active[07:00] = data_write;
+           `ADXL362_THRESH_INACT_LOW:  threshold_inactive[07:00] = data_write;
+           `ADXL362_THRESH_INACT_HIGH: threshold_inactive[10:08] = data_write[2:0]; 
+           `ADXL362_TIME_INACT_LOW:    time_inactive[7:0] = data_write;
+           `ADXL362_TIME_INACT_HIGH:   time_inactive[15:8] = data_write;
+           `ADXL362_FIFO_CONTROL:      fifo_ctrl = data_write;
+           `ADXL362_FIFO_SAMPLES:      fifo_samples= data_write;
+           `ADXL362_INTMAP1:           intmap1 = data_write;
+           `ADXL362_INTMAP2:           intmap2 = data_write;
+           `ADXL362_FILTER_CTL:        filter_ctrl = data_write;
+           `ADXL362_POWER_CTL:         power_ctrl = data_write;
+           `ADXL362_SELF_TEST:         self_test = data_write[0];        
+          endcase // case (address)
+      end else begin // if (write)
+         
+      end
+   end // always @ (posedge clk)   
    
 endmodule // adxl362_regs

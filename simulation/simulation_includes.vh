@@ -33,6 +33,8 @@
 
 `define ADXL362_TASKS `TB.adxl362_tasks
 `define ADXL362_NCS   `TB.ncs
+`define ADXL362_INT1   `TB.int1
+`define ADXL362_INT2   `TB.int2
 `define ADXL362_WRITE_REGISTER `ADXL362_TASKS.write_single_register
 `define ADXL362_READ_REGISTER `ADXL362_TASKS.read_single_register
 `define ADXL362_CHECK_REGISTER `ADXL362_TASKS.check_single_register

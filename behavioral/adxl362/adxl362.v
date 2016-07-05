@@ -11,9 +11,7 @@
 
 module adxl362 (/*AUTOARG*/
    // Outputs
-   MISO,
-   // Inouts
-   INT1, INT2,
+   MISO, INT1, INT2,
    // Inputs
    SCLK, MOSI, nCS
    ) ;
@@ -21,8 +19,8 @@ module adxl362 (/*AUTOARG*/
    input wire MOSI;
    input wire nCS;
    output wire MISO;
-   inout wire  INT1;
-   inout wire  INT2;
+   output reg  INT1;
+   output reg  INT2;
 
 
    /*AUTOWIRE*/
@@ -44,6 +42,7 @@ module adxl362 (/*AUTOARG*/
    wire [7:0]           power_ctrl;             // From registers of adxl362_regs.v
    wire                 read_data_fifo;         // From spi of adxl362_spi.v
    wire                 reset;                  // From sys_con of adxl362_system_controller.v
+   wire                 rising_clk_odr;         // From accelerometer of adxl362_accelerometer.v
    wire                 rst;                    // From sys_con of adxl362_system_controller.v
    wire                 self_test;              // From registers of adxl362_regs.v
    wire [10:0]          threshold_active;       // From registers of adxl362_regs.v
@@ -78,9 +77,53 @@ module adxl362 (/*AUTOARG*/
    assign fifo_temp = fifo_ctrl[2];
    assign status = {5'b0, ~empty, data_ready};
 
+   always @(posedge clk_16mhz)
+     if (rst) begin
+        INT1 <= 0;
+     end else begin
+        if (intmap1[0]) begin
+           if (intmap1[7]) begin
+              INT1 <= ~status[0];           
+           end else begin
+              INT1 <= status[0];           
+           end
+        end        
+
+        if (intmap1[1]) begin
+           if (intmap1[7]) begin
+              INT1 <= ~status[1];           
+           end else begin
+              INT1 <= status[1];           
+           end
+        end        
+     end // else: !if(rst)
+   
+
+
+   always @(posedge clk_16mhz)
+     if (rst) begin
+        INT2 <= 0;
+     end else begin
+        if (intmap2[0]) begin
+           if (intmap2[7]) begin
+              INT2 <= ~status[0];           
+           end else begin
+              INT2 <= status[0];           
+           end
+        end        
+
+        if (intmap2[1]) begin
+           if (intmap2[7]) begin
+              INT2 <= ~status[1];           
+           end else begin
+              INT2 <= status[1];           
+           end
+        end        
+     end // else: !if(rst)
+   
    always @(posedge clk_16mhz) begin
       //data_ready = fifo_enable & ~fifo_empty;
-      if (fifo_write) begin
+      if (fifo_write || rising_clk_odr) begin
          data_ready <= 1;         
       end
 
@@ -190,6 +233,7 @@ module adxl362 (/*AUTOARG*/
    //
    adxl362_accelerometer accelerometer (/*AUTOINST*/
                                         // Outputs
+                                        .rising_clk_odr (rising_clk_odr),
                                         .fifo_write     (fifo_write),
                                         .fifo_write_data(fifo_write_data[15:0]),
                                         .xdata          (xdata[11:0]),
