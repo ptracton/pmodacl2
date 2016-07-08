@@ -44,3 +44,9 @@
 .simvision/
 INCA_libs/
 *.shm/
+
+# Xilinx Files
+*.jou
+*.wdb
+*.pb
+xsim.dir/

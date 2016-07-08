@@ -8,6 +8,7 @@
 // Update Count    : 0
 // Status          : Unknown, Use with caution!
 
+`include "adxl362_registers.vh"
 
 module adxl362 (/*AUTOARG*/
    // Outputs

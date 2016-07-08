@@ -10,7 +10,7 @@
       
 
 ../testbench/adxl362_testbench.v
- ../testbench/test_tasks.v
+../testbench/test_tasks.v
 ../testbench/adxl362_tasks.v
 ../testbench/testbench_intercon.v
 ../testbench/dump.v

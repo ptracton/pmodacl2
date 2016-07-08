@@ -23,15 +23,15 @@
 	      },
 	      "test_case" :{
 	          "executable" : "xvlog",
-            "arguments" : " $simulation"
+            "arguments" : " $simulation -i ../behavioral/adxl362/"
 	      },        
 	      "elaborate" :{
 	          "executable" : "xelab",
-            "arguments" : "-prj rtl_xsim.prj -debug all  --timescale 1ns/1ns -L unisims_ver -L unimacro_ver work.testbench"
+            "arguments" : "-prj rtl_xsim.prj -debug all  --timescale 1ns/1ns -L unisims_ver -L unimacro_ver work.adxl362_testbench"
 	      },        
 	      "xsimulation" : {
 	          "executable": "xsim",
-	          "arguments" : " work.testbench -tclbatch simulation.tcl"	
+	          "arguments" : " work.adxl362_testbench -tclbatch simulation.tcl"	
 	      },
 	      "run" : {
 	          "executable" : "./a.out",
