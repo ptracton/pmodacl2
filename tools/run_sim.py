@@ -15,6 +15,7 @@ import sys
 import argparse
 import string
 
+
 def which(program):
     """
     Find the path to an executable program
@@ -22,9 +23,10 @@ def which(program):
 
     def is_exe(fpath):
         """
-        Return True is the fpath exists and is executable.  This is needed since the
-        executables are specifed in the JSON files, but not the path to them.  The
-        executables may be in different locations based on which PC is running this.
+        Return True is the fpath exists and is executable. This is needed since
+        executables are specifed in the JSON files, but not the path to them.
+        The executables may be in different locations based on which PC is
+        running this.
         """
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
@@ -58,12 +60,12 @@ if __name__ == "__main__":
                         action="store_true")
     parser.add_argument("--simulation",
                         help="Which simulation test case to run",
-                        required = True,
-                        action="store")    
-    
+                        required=True,
+                        action="store")
+
     args = parser.parse_args()
     if args.debug:
-        print (os.environ['PATH'])
+        print(os.environ['PATH'])
         print(args)
 
     if args.icarus:
@@ -87,13 +89,14 @@ if __name__ == "__main__":
     for step in sorted(flow_steps.keys()):
         print("\nRunning Step: %s " % step)
         executable = json_data['flow'][flow_steps[step]]['executable']
-        arguments = string.Template(json_data['flow'][flow_steps[step]]['arguments'])
+        arguments=string.Template(
+            json_data['flow'][flow_steps[step]]['arguments'])
         arguments_str = arguments.safe_substitute(simulation=args.simulation)
-        if args.debug:        
+        if args.debug:
             print(executable)
-        if (arguments == None):
+        if (arguments is None):
             command = executable
-        else:         
+        else:
             command = executable + " " + arguments_str
 
         print(command)
