@@ -89,7 +89,7 @@ if __name__ == "__main__":
     for step in sorted(flow_steps.keys()):
         print("\nRunning Step: %s " % step)
         executable = json_data['flow'][flow_steps[step]]['executable']
-        arguments=string.Template(
+        arguments = string.Template(
             json_data['flow'][flow_steps[step]]['arguments'])
         arguments_str = arguments.safe_substitute(simulation=args.simulation)
         if args.debug:

@@ -1,0 +1,26 @@
+verilog work ../testbench/adxl362_testbench.v -i ../behavioral/adxl362/
+verilog work ../testbench/test_tasks.v -i ../behavioral/adxl362/
+verilog work ../testbench/adxl362_tasks.v -i ../behavioral/adxl362/ 
+verilog work ../testbench/testbench_intercon.v -i ../behavioral/adxl362/
+verilog work ../testbench/dump.v -i ../behavioral/adxl362/
+
+verilog work ../behavioral/wb_intercon/wb_arbiter.v -i ../behavioral/verilog_utils/
+verilog work ../behavioral/wb_intercon/wb_data_resize.v
+verilog work ../behavioral/wb_intercon/wb_mux.v -i ../behavioral/verilog_utils/
+
+verilog work ../behavioral/wb_bfm/wb_bfm_master.v
+
+verilog work ../behavioral/verilog-arbiter/arbiter.v -i ../behavioral/verilog_utils/
+
+verilog work ../behavioral/simple_spi/trunk/rtl/verilog/simple_spi_top.v -i ../testbench
+verilog work ../behavioral/simple_spi/trunk/rtl/verilog/fifo4.v -i ../testbench
+
+verilog work ../behavioral/adxl362/adxl362.v -i ../behavioral/adxl362/
+verilog work ../behavioral/adxl362/adxl362_system_controller.v
+verilog work ../behavioral/adxl362/adxl362_spi.v
+verilog work ../behavioral/adxl362/adxl362_regs.v -i ../behavioral/adxl362/     
+verilog work ../behavioral/adxl362/adxl362_fifo.v
+verilog work ../behavioral/adxl362/adxl362_accelerometer.v      
+
+
+
