@@ -14,13 +14,13 @@ module adxl362_spi (/*AUTOARG*/
    // Outputs
    MISO, address, data_write, data_fifo_write, write, read_data_fifo,
    // Inputs
-   SCLK, MOSI, nCS, clk_16mhz, data_read, data_fifo_read, rst
+   SCLK, MOSI, nCS, clk_sys, data_read, data_fifo_read, rst
    ) ;
    input wire SCLK;
    input wire MOSI;
    input wire nCS;
    output reg MISO;
-   input wire clk_16mhz;
+   input wire clk_sys;
    
    output reg [5:0] address;
    output reg [7:0] data_write;
@@ -66,6 +66,11 @@ module adxl362_spi (/*AUTOARG*/
         MISO <= spi_data_out[7-bit_count];
      end
 
+
+   wire spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
+   wire spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
+   
+   
    //
    // Detect the edge and pulse write for a single clock while we
    // are not flushing the FIFO
@@ -76,7 +81,7 @@ module adxl362_spi (/*AUTOARG*/
    parameter WR_WRITE = 3'h1;
    parameter WR_DONE  = 3'h2;
    
-   always @(posedge clk_16mhz)  begin
+   always @(posedge clk_sys)  begin
       wr_state <= wr_next_state;      
    end
 
@@ -112,7 +117,7 @@ module adxl362_spi (/*AUTOARG*/
          .empty            (empty_fifo),
          // Inputs
          .data_write       (spi_data_in),
-         .clk              (clk_16mhz),
+         .clk              (clk_sys),
          .rst              (rst),
          .flush            (flush_fifo),
          .read             (read_fifo),
@@ -120,24 +125,23 @@ module adxl362_spi (/*AUTOARG*/
    
    
    parameter STATE_IDLE              = 5'h00;
-   parameter STATE_READ_COMMAND      = 5'h01;
-   parameter STATE_DONE_COMMAND      = 5'h02;   
-   parameter STATE_WAIT_ADDRESS      = 5'h03; 
-   parameter STATE_READ_ADDRESS      = 5'h04;
-   parameter STATE_DONE_ADDRESS      = 5'h5; 
-   parameter STATE_WAIT_DATA         = 5'h06; 
-   parameter STATE_READ_DATA         = 5'h07;
-   parameter STATE_DONE_DATA         = 5'h08;
-   parameter STATE_READ_REGISTER     = 5'h09;   
-   parameter STATE_WRITE_REGISTER    = 5'h0A;
-   parameter STATE_DONE_REGISTER     = 5'h0B;
-   parameter STATE_READ_FIFO         = 5'h0C;
-   parameter STATE_INCREMENT_ADDRESS = 5'h0D;
-   parameter STATE_FINISH            = 5'h0E;
-   parameter STATE_RESPOND_DATA      = 5'h0F;
-   parameter STATE_SEND_FIFO_DATA_LOW = 5'h10;
-   parameter STATE_SEND_FIFO_DATA_HI  = 5'h11;
-   parameter STATE_FIFO_DONE          = 5'h12;
+   parameter STATE_WAIT_START_ADDRESS = 5'h02;
+   parameter STATE_READ_ADDRESS = 5'h03;   
+   parameter STATE_WAIT_START_DATA= 5'h04;
+   parameter STATE_WAIT_START_READ_RESPONSE = 5'h05;   
+   parameter STATE_READ_DATA = 5'h06;
+   parameter STATE_WRITE_REGISTER = 5'h07;
+   parameter STATE_WRITE_REGISTER_DONE = 5'h08;
+   parameter STATE_WRITE_INCREMENT_ADDRESS = 5'h09;
+   parameter STATE_WAIT_DONE_READ_RESPONSE = 5'h0A;   
+   parameter STATE_READ_INCREMENT_ADDRESS = 5'h0B;
+   parameter STATE_WAIT_START_FIFO_RESPONSE_LOW = 5'h0C;
+   parameter STATE_WAIT_DONE_FIFO_RESPONSE_LOW = 5'h0D;
+   parameter STATE_WAIT_START_FIFO_RESPONSE_HIGH = 5'h0E;
+   parameter STATE_WAIT_DONE_FIFO_RESPONSE_HIGH= 5'h0F;
+   parameter STATE_WAIT_START_FIFO_READ_LOW = 5'h10;
+   parameter STATE_WAIT_START_FIFO_READ_HIGH = 5'h11;   
+   parameter STATE_POP_FIFO = 5'h12;
 
    
    reg [4:0] state = STATE_IDLE;   
@@ -146,260 +150,227 @@ module adxl362_spi (/*AUTOARG*/
    reg       finish = 0;
    reg       terminate_transaction =0;
    
-   always @(posedge clk_16mhz)
+   always @(posedge clk_sys)
      state <= next_state;        
 
    always @(*) begin
       case (state)
         STATE_IDLE: begin
-           read_fifo = 0;
-           flush_fifo = 0;  
-           write = 0;    
-           data_fifo_write = 0;   
-           finish = 0;           
+           command = 0;
+           address = 0;
            spi_data_out = 0;
-           terminate_transaction = 0;
-           read_data_fifo =0;
-           
-           if (! empty_fifo) begin
-              next_state = STATE_READ_COMMAND;
-              first = 1;              
-           end
-        end
-
-        STATE_READ_COMMAND: begin
-           if (nCS == 1) begin
-              terminate_transaction = 1; 
-              next_state = STATE_FINISH;               
-           end           
-           if (first) begin
-              command = data_rd;
-              read_fifo = 1;              
-              next_state = STATE_DONE_COMMAND;              
-           end
-        end        
-
-        STATE_DONE_COMMAND: begin
-           if (nCS == 1) begin
-              terminate_transaction = 1;
-              next_state = STATE_FINISH;                             
-           end           
-           read_fifo = 0;
-           first = 0;           
-           next_state = STATE_WAIT_ADDRESS;    
-           if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_ADDRESS;           
-           else if (`ADXL362_COMMAND_READ == command)  next_state = STATE_WAIT_ADDRESS;
-           else if (`ADXL362_COMMAND_FIFO == command)  next_state = STATE_READ_FIFO;       
-        end
-        
-        STATE_WAIT_ADDRESS: begin
-           if (nCS == 1) begin
-              terminate_transaction = 1; 
-              next_state = STATE_FINISH;                            
-           end           
-           if (! empty_fifo) begin
-              next_state = STATE_READ_ADDRESS;
-              address = data_rd;
-              spi_data_out = data_read;  
-              first = 1;              
-           end else begin
-              next_state = STATE_WAIT_ADDRESS;              
-           end           
-        end        
-        
-        STATE_READ_ADDRESS: begin
-           if (nCS == 1) begin
-              terminate_transaction = 1;    
-              next_state = STATE_FINISH;                         
-           end
-//           address = data_rd;
-           read_fifo = 1;
+           data_write = 0;
+           write = 0;
            first = 0;
-           next_state = STATE_DONE_ADDRESS;           
-        end
-
-        STATE_DONE_ADDRESS:begin
-           read_fifo = 0;           
-           if (nCS == 1) begin
-              terminate_transaction = 1;  
-           end
-           if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_DATA;           
-           else if (`ADXL362_COMMAND_READ == command)  next_state = STATE_READ_DATA;
-           else next_state = STATE_FINISH;           
-        end
-        
-        STATE_READ_DATA: begin
-           spi_data_out = data_read;  
-           next_state = STATE_RESPOND_DATA;                
-        end
-
-        STATE_RESPOND_DATA:begin
-           if (nCS == 1) begin
-              terminate_transaction = 1;  
-           end
-           
-           if (write_fifo) begin
-              read_fifo = 1;
-              first = 1;  
-             // next_state =STATE_DONE_REGISTER;
-              next_state = STATE_INCREMENT_ADDRESS;              
-           end else begin
-              read_fifo = 0;  
-              next_state = STATE_RESPOND_DATA;
-           end
-        end
-        
-        STATE_READ_FIFO: begin
            read_data_fifo = 0;
-           spi_data_out = data_fifo_read[7:0];
-           if (nCS == 1) begin
-              terminate_transaction = 1;  
-           end           
-           next_state = STATE_SEND_FIFO_DATA_LOW;
            
-        end
-
-        STATE_SEND_FIFO_DATA_LOW: begin
-           if (nCS == 1) begin
-              terminate_transaction = 1;  
-           end           
-           read_data_fifo = 0;
-           if (write_fifo) begin
-              if (terminate_transaction) begin
-                 next_state = STATE_FINISH;
-              end else begin
-                 spi_data_out = data_fifo_read[15:08];
-                 next_state = STATE_SEND_FIFO_DATA_HI;
+           if (! nCS) begin
+              if (spi_byte_done) begin
+                 command = spi_data_in;
+                 if (`ADXL362_COMMAND_FIFO == command) begin
+                    spi_data_out = data_rd;                    
+                    next_state = STATE_WAIT_START_FIFO_READ_LOW;                    
+                 end else if ((`ADXL362_COMMAND_WRITE == command) || (`ADXL362_COMMAND_READ==command)) begin
+                    next_state = STATE_WAIT_START_ADDRESS;                    
+                 end
               end
+           end
+        end // case: STATE_IDLE
+
+        STATE_WAIT_START_ADDRESS: begin
+           if (spi_byte_begin) begin
+              next_state = STATE_READ_ADDRESS;
            end else begin
-              next_state = STATE_SEND_FIFO_DATA_LOW;              
+              next_state = STATE_WAIT_START_ADDRESS;              
            end
         end
 
-        STATE_SEND_FIFO_DATA_HI: begin
-           if (nCS == 1) begin
-              terminate_transaction = 1;  
-           end           
-           read_data_fifo = 0;
-           if (write_fifo) begin
-              read_data_fifo = 1;
-              if (terminate_transaction) begin
-                 next_state = STATE_FINISH;
-              end else begin
-                 next_state = STATE_READ_FIFO;
-              end
+        STATE_READ_ADDRESS: begin
+           if (spi_byte_done) begin
+              address = spi_data_in;
+              if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_START_DATA;
+              if (`ADXL362_COMMAND_READ == command) next_state = STATE_WAIT_START_READ_RESPONSE;
            end else begin
-              next_state = STATE_SEND_FIFO_DATA_HI;              
+              next_state = STATE_READ_ADDRESS;
            end
-        end
-        
-        STATE_WAIT_DATA:begin
-           if (nCS == 1) begin
-              terminate_transaction = 1;              
-           end 
-//           if (! empty_fifo) begin
-           if (write_fifo) begin
-              data_write = spi_data_in;
-              write = 1;
-              read_fifo = 1;              
-//              next_state = STATE_WRITE_REGISTER;
-              next_state = STATE_DONE_REGISTER;
-              first = 1;              
-           end else begin
-              next_state = STATE_WAIT_DATA;              
-           end                      
-           
-        end
-        
-        STATE_WRITE_REGISTER: begin
-//           data_write = data_rd;
-           read_fifo = 1;
-           write = 1;          
-           if (nCS == 1) begin
-              terminate_transaction = 1;              
-           end
-           first = 1;  
-           next_state = STATE_DONE_REGISTER;
         end        
 
-        STATE_DONE_REGISTER:begin
-           write = 0;
-           read_fifo = 0;
-           if (nCS == 1) begin
-              terminate_transaction = 1;              
-           end 
-           first = 1;              
-           next_state = STATE_INCREMENT_ADDRESS;
+        STATE_WAIT_START_DATA: begin
+           if (!nCS) begin
+              if (spi_byte_begin) begin
+                 next_state = STATE_READ_DATA;
+              end else begin
+                 next_state = STATE_WAIT_START_DATA; 
+              end         
+           end else begin
+              next_state = STATE_IDLE;              
+           end  
         end
 
-        STATE_INCREMENT_ADDRESS: begin
-           if (first ) begin
-              write = 0;
-              read_fifo = 0;
-              address = address + 1;  
-              spi_data_out = data_read;             
-              first = 0;              
-           end
-           if (terminate_transaction || nCS) begin
-              next_state = STATE_FINISH;              
+        STATE_READ_DATA:begin
+           if (spi_byte_done) begin
+              data_write = spi_data_in;  
+              next_state = STATE_WRITE_REGISTER;
            end else begin
-              if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_DATA;           
-              else if (`ADXL362_COMMAND_READ == command)  next_state = STATE_READ_DATA;
-              else if (`ADXL362_COMMAND_FIFO == command)  next_state = STATE_READ_FIFO;
-              else next_state = STATE_FINISH;  
+              next_state = STATE_READ_DATA;
            end
-        end // case: STATE_INCREMENT_ADDRESS
-               
-        STATE_FINISH: begin
-           write = 0;
-           read_fifo = 0;
-           first = 0;           
-           flush_fifo = 1;
-           terminate_transaction = 0;  
-           read_data_fifo = 0;         
-/* -----\/----- EXCLUDED -----\/-----
-           if (finish == 0) begin
-              finish = 1;              
-              next_state = STATE_FINISH;     
-           end else begin
- -----/\----- EXCLUDED -----/\----- */
-           if (nCS) begin
-              next_state = STATE_FINISH;
-           end else begin
-              next_state = STATE_IDLE;
-           end
-           //end
         end
+
+        STATE_WRITE_REGISTER:begin
+           write = 1;
+           next_state = STATE_WRITE_REGISTER_DONE;
+        end
+
+        STATE_WRITE_REGISTER_DONE:begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else begin              
+              write = 0;
+              first = 1;              
+              next_state = STATE_WRITE_INCREMENT_ADDRESS;
+           end
+        end
+
+        STATE_WRITE_INCREMENT_ADDRESS: begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else begin
+              if (first) begin
+                 address = address + 1;
+                 first = 0;                 
+              end
+              next_state = STATE_WAIT_START_DATA;
+           end
+        end
+
+        STATE_WAIT_START_READ_RESPONSE:begin
+           if (! nCS) begin
+              spi_data_out = data_read;
+              if (spi_byte_begin) begin
+                 next_state = STATE_WAIT_DONE_READ_RESPONSE;              
+              end else begin
+                 next_state = STATE_WAIT_START_READ_RESPONSE;              
+              end
+           end else begin
+              next_state = STATE_IDLE;              
+           end
+        end // case: STATE_WAIT_START_READ_RESPONSE        
+
+        STATE_WAIT_DONE_READ_RESPONSE: begin
+           if (spi_byte_done) begin
+              first = 1;              
+              next_state = STATE_READ_INCREMENT_ADDRESS;              
+           end else begin
+              next_state = STATE_WAIT_DONE_READ_RESPONSE;              
+           end
+        end
+
+        STATE_READ_INCREMENT_ADDRESS: begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else begin
+              if (first) begin
+                 address = address + 1;
+                 first = 0;                 
+              end
+              next_state = STATE_WAIT_START_READ_RESPONSE;
+           end
+        end
+
+        STATE_WAIT_START_FIFO_READ_LOW: begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else begin
+              read_data_fifo = 0;
+              spi_data_out = data_fifo_read[7:0];
+              next_state = STATE_WAIT_START_FIFO_RESPONSE_LOW;
+           end
+        end
+
+        STATE_WAIT_START_FIFO_RESPONSE_LOW: begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else begin
+              if (spi_byte_begin) begin
+                 next_state = STATE_WAIT_DONE_FIFO_RESPONSE_LOW;              
+              end else begin
+                 next_state = STATE_WAIT_START_FIFO_RESPONSE_LOW;              
+              end           
+           end
+        end
+
+        STATE_WAIT_DONE_FIFO_RESPONSE_LOW:begin
+           if (spi_byte_done) begin
+              next_state = STATE_WAIT_START_FIFO_READ_HIGH;              
+           end else begin
+              next_state = STATE_WAIT_DONE_FIFO_RESPONSE_LOW;              
+           end           
+        end
+
+        STATE_WAIT_START_FIFO_READ_HIGH:begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else begin
+              read_data_fifo = 0;
+              spi_data_out = data_fifo_read[15:08];
+              next_state = STATE_WAIT_START_FIFO_RESPONSE_HIGH;
+           end
+        end
+
+
+        STATE_WAIT_START_FIFO_RESPONSE_HIGH: begin
+           if (spi_byte_begin) begin
+              next_state = STATE_WAIT_DONE_FIFO_RESPONSE_HIGH;              
+           end else begin
+              next_state = STATE_WAIT_START_FIFO_RESPONSE_HIGH;              
+           end           
+        end
+
+        STATE_WAIT_DONE_FIFO_RESPONSE_HIGH:begin
+           if (spi_byte_done) begin
+              next_state = STATE_POP_FIFO;              
+           end else begin
+              next_state = STATE_WAIT_DONE_FIFO_RESPONSE_HIGH;              
+           end           
+        end        
+        
+        STATE_POP_FIFO:begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else begin
+              read_data_fifo = 1;
+              next_state = STATE_WAIT_START_FIFO_READ_LOW;
+           end
+        end
+          
         
         default: begin
-           next_state = STATE_FINISH;             
+           next_state = STATE_IDLE;             
         end
       endcase // case (state)
       
    end
 
-
    reg [(40*8)-1:0] state_name =0;
    always @(*)
      case (state)
        STATE_IDLE: state_name = "IDLE";
-       STATE_READ_COMMAND: state_name = "Read Command";
-       STATE_DONE_COMMAND: state_name = "Read Command Done";
-       STATE_WAIT_ADDRESS: state_name = "Wait Address";       
-       STATE_READ_ADDRESS: state_name = "Read Address";
-       STATE_DONE_ADDRESS: state_name = "Done Address";
-       STATE_WAIT_DATA: state_name = "Wait Data";              
-       STATE_READ_DATA: state_name = "Read Data";
-       STATE_READ_REGISTER: state_name = "Read Register";
-       STATE_READ_FIFO: state_name = "Read FIFO";
-       STATE_WRITE_REGISTER: state_name = "Write Register";
-       STATE_DONE_REGISTER: state_name = "Write Done Register";
-       STATE_INCREMENT_ADDRESS: state_name = "Increment Address";
-       STATE_FINISH: state_name = "State Finish";  
-       STATE_RESPOND_DATA: state_name = "Respond Data";
-       STATE_SEND_FIFO_DATA_LOW: state_name = "Send FIFO Data Low";
-       STATE_SEND_FIFO_DATA_HI: state_name = "Send FIFO Data High";
-       STATE_FIFO_DONE: state_name = "FIFO Done";              
+       STATE_WAIT_START_FIFO_READ_LOW: state_name = "START FIFO READ LOW";       
+       STATE_WAIT_START_ADDRESS : state_name = "WAIT START ADDRESS";
+       STATE_READ_ADDRESS : state_name = "READ ADDRESS";
+       STATE_WAIT_START_DATA: state_name = "WAIT START DATA";
+       STATE_WAIT_START_READ_RESPONSE : state_name = "WAIT START READ"; 
+       STATE_READ_DATA : state_name = "READ DATA"; 
+       STATE_WRITE_REGISTER : state_name = "WRITE REGISTER"; 
+       STATE_WRITE_REGISTER_DONE : state_name = "WRITE REGISTER DONE"; 
+       STATE_WRITE_INCREMENT_ADDRESS : state_name = "WRITE INCREMENT ADDRESS";
+       STATE_WAIT_DONE_READ_RESPONSE: state_name = "DONE READ RESPONSE"; 
+       STATE_READ_INCREMENT_ADDRESS: state_name = "READ INCREMENT ADDRESS";
+       STATE_WAIT_START_FIFO_RESPONSE_LOW: state_name = "START FIFO RESPONSE LOW";
+       STATE_WAIT_DONE_FIFO_RESPONSE_LOW : state_name = "WAIT DONE FIFO RESPONSE LOW";
+       STATE_WAIT_START_FIFO_RESPONSE_HIGH: state_name = "START FIFO RESPONSE HIGH";
+       STATE_WAIT_DONE_FIFO_RESPONSE_HIGH : state_name = "WAIT DONE FIFO RESPONSE HIGH";       
+       STATE_POP_FIFO: state_name = "POP FIFO";
        default: state_name = "DEFAULT!";
        
      endcase // case (state)

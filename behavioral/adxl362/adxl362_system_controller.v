@@ -10,13 +10,13 @@
 
 module adxl362_system_controller (/*AUTOARG*/
    // Outputs
-   clk, clk_16mhz, reset, clk_odr, rst,
+   clk, clk_sys, reset, clk_odr, rst,
    // Inputs
    soft_reset, odr
    ) ;
 
    output reg clk;
-   output reg clk_16mhz;
+   output reg clk_sys;
    output wire reset;
    input wire soft_reset;
    output wire clk_odr;
@@ -30,7 +30,7 @@ module adxl362_system_controller (/*AUTOARG*/
    reg        por = 1;
    assign rst = |reset_count;
    
-   always @(posedge clk_16mhz)
+   always @(posedge clk_sys)
      if (por || soft_reset) begin
         reset_count <= 1;
         por <= 0;        
@@ -50,14 +50,14 @@ module adxl362_system_controller (/*AUTOARG*/
    end
 
    //
-   // Free Running 16MHz clock
+   // Free Running clock
    //
    // Added this in to work out SPI/Register access
    //
    initial begin
-      clk_16mhz <= 1'b0;
+      clk_sys <= 1'b0;
       forever begin
-         #31 clk_16mhz <= ~clk_16mhz;
+         #25 clk_sys <= ~clk_sys;
       end
    end
 

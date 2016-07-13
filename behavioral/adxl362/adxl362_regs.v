@@ -17,11 +17,11 @@ module adxl362_regs (/*AUTOARG*/
    time_inactive, act_inact_ctrl, fifo_ctrl, fifo_samples, intmap1,
    intmap2, filter_ctrl, power_ctrl, self_test,
    // Inputs
-   clk_16mhz, write, address, data_write, xdata, ydata, zdata,
+   clk_sys, write, address, data_write, xdata, ydata, zdata,
    temperature, status
    ) ;
 
-   input wire clk_16mhz;   
+   input wire clk_sys;   
    input wire write;
    input wire [5:0] address;
    input wire [7:0] data_write;
@@ -94,7 +94,7 @@ module adxl362_regs (/*AUTOARG*/
    // Write to the registers
    //
    //   always @(posedge write) begin
-   always @(posedge clk_16mhz) begin
+   always @(posedge clk_sys) begin
       if (write) begin
          case (address)
            `ADXL362_THRESH_ACT_LOW:    threshold_active[07:00] = data_write;        

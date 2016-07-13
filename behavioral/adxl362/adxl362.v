@@ -29,8 +29,8 @@ module adxl362 (/*AUTOARG*/
    wire [7:0]           act_inact_ctrl;         // From registers of adxl362_regs.v
    wire [5:0]           address;                // From spi of adxl362_spi.v
    wire                 clk;                    // From sys_con of adxl362_system_controller.v
-   wire                 clk_16mhz;              // From sys_con of adxl362_system_controller.v
    wire                 clk_odr;                // From sys_con of adxl362_system_controller.v
+   wire                 clk_sys;                // From sys_con of adxl362_system_controller.v
    wire                 data_fifo_write;        // From spi of adxl362_spi.v
    wire [7:0]           data_write;             // From spi of adxl362_spi.v
    wire [3:0]           fifo_ctrl;              // From registers of adxl362_regs.v
@@ -78,7 +78,7 @@ module adxl362 (/*AUTOARG*/
    assign fifo_temp = fifo_ctrl[2];
    assign status = {5'b0, ~empty, data_ready};
 
-   always @(posedge clk_16mhz)
+   always @(posedge clk_sys)
      if (rst) begin
         INT1 <= 0;
      end else begin
@@ -101,7 +101,7 @@ module adxl362 (/*AUTOARG*/
    
 
 
-   always @(posedge clk_16mhz)
+   always @(posedge clk_sys)
      if (rst) begin
         INT2 <= 0;
      end else begin
@@ -122,7 +122,7 @@ module adxl362 (/*AUTOARG*/
         end        
      end // else: !if(rst)
    
-   always @(posedge clk_16mhz) begin
+   always @(posedge clk_sys) begin
       //data_ready = fifo_enable & ~fifo_empty;
       if (fifo_write || rising_clk_odr) begin
          data_ready <= 1;         
@@ -146,7 +146,7 @@ module adxl362 (/*AUTOARG*/
    adxl362_system_controller sys_con (/*AUTOINST*/
                                       // Outputs
                                       .clk              (clk),
-                                      .clk_16mhz        (clk_16mhz),
+                                      .clk_sys          (clk_sys),
                                       .reset            (reset),
                                       .clk_odr          (clk_odr),
                                       .rst              (rst),
@@ -173,7 +173,7 @@ module adxl362 (/*AUTOARG*/
                    .SCLK                (SCLK),
                    .MOSI                (MOSI),
                    .nCS                 (nCS),
-                   .clk_16mhz           (clk_16mhz),
+                   .clk_sys           (clk_sys),
                    .data_read           (data_read[7:0]),
                    .data_fifo_read      (data_fifo_read[15:0]),
                    .rst                 (rst));
@@ -199,7 +199,7 @@ module adxl362 (/*AUTOARG*/
                           .power_ctrl           (power_ctrl[7:0]),
                           .self_test            (self_test),
                           // Inputs
-                          .clk_16mhz            (clk_16mhz),
+                          .clk_sys            (clk_sys),
                           .write                (write),
                           .address              (address[5:0]),
                           .data_write           (data_write[7:0]),
@@ -222,7 +222,7 @@ module adxl362 (/*AUTOARG*/
                      .empty             (empty),
                      // Inputs
                      .data_write        (fifo_write_data),
-                     .clk               (clk_16mhz),
+                     .clk               (clk_sys),
                      .rst               (rst),
                      .flush             (1'b0),
                      .read              (read_data_fifo),
@@ -242,7 +242,7 @@ module adxl362 (/*AUTOARG*/
                                         .zdata          (zdata[11:0]),
                                         .temperature    (temperature[11:0]),
                                         // Inputs
-                                        .clk_16mhz      (clk_16mhz),
+                                        .clk_sys      (clk_sys),
                                         .clk_odr        (clk_odr),
                                         .fifo_mode      (fifo_mode[1:0]),
                                         .fifo_temp      (fifo_temp));

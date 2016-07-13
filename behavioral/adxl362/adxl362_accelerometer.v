@@ -13,7 +13,7 @@ module adxl362_accelerometer (/*AUTOARG*/
    rising_clk_odr, fifo_write, fifo_write_data, xdata, ydata, zdata,
    temperature,
    // Inputs
-   clk_16mhz, clk_odr, fifo_mode, fifo_temp
+   clk_sys, clk_odr, fifo_mode, fifo_temp
    ) ;
 
    parameter XDATA_FILE = "xdata.txt";
@@ -23,7 +23,7 @@ module adxl362_accelerometer (/*AUTOARG*/
    parameter MEMORY_DEPTH = 16;
 
    
-   input wire clk_16mhz;
+   input wire clk_sys;
    input wire clk_odr;
    input wire [1:0] fifo_mode; 
    input wire       fifo_temp;
@@ -67,7 +67,7 @@ module adxl362_accelerometer (/*AUTOARG*/
 
    reg previous;
    assign rising_clk_odr = (previous == 0) & (clk_odr == 1);
-   always @(posedge clk_16mhz) begin
+   always @(posedge clk_sys) begin
       previous <= clk_odr;  //Generally a bad idea, but we are not going for synthesis      
    end
 
@@ -85,7 +85,7 @@ module adxl362_accelerometer (/*AUTOARG*/
    reg [3:0] state = STATE_IDLE;
    reg [3:0] next_state = STATE_IDLE;
 
-   always @(posedge clk_16mhz) begin
+   always @(posedge clk_sys) begin
       state <= next_state;      
    end
 

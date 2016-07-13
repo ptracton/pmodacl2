@@ -29,7 +29,7 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          // 4    Master            1
          // 3    CPOL              0
          // 2    CPHA              0 
-         // 1:0  SPR               10  -- Divide WB_CLK by 16 target SPI at 6.25 MHz
+         // 1:0  SPR               10  -- Divide WB_CLK by 128 target SPI at 6.25 MHz
          // 
          //
          @(posedge `WB_CLK);
@@ -56,10 +56,10 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          // BIT  Controls          State
          // 7:6  Int Count         00 -- After each transfer
          // 5:2  RESERVED          RO
-         // 1:0  ESPR              00 -- Divide WB_CLK by 16 target SPI at 6.25 MHz
+         // 1:0  ESPR              00 -- Divide WB_CLK by 128 target SPI at 6.25 MHz
          //  
          @(posedge `WB_CLK);
-         `TB.master_bfm.write_burst(`SPI_EXTENSION_REG_ADDRESS, 32'h0000_0000, 4'h1, 1, 0, err);
+         `TB.master_bfm.write_burst(`SPI_EXTENSION_REG_ADDRESS, 32'h0000_0001, 4'h1, 1, 0, err);
       end
    endtask //
    

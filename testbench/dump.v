@@ -26,14 +26,14 @@ module dump;
 `else	
 	    $dumpfile({test_name,".vcd"});
 	    $dumpvars(0, `TB);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[0]);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[1]);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[2]);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[3]);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[4]);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[5]);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[6]);
-        $dumpvars(1, `ADXL362_SPI_FIFO.fifo[7]);        
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[0]);
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[1]);
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[2]);
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[3]);
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[4]);
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[5]);
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[6]);
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[7]);        
 `endif
 	      
      end // initial begin
