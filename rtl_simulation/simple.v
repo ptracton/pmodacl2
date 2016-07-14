@@ -16,9 +16,14 @@ module test_case ();
    // Test Configuration
    // These parameters need to be set for each test case
    //
-   parameter simulation_name = "simpl";
+   parameter simulation_name = "simple";
   
+   defparam `ADXL362_ACCELEROMETER.XDATA_FILE = "accelerometer_00_xdata.txt";
+   defparam `ADXL362_ACCELEROMETER.YDATA_FILE = "accelerometer_00_ydata.txt";
+   defparam `ADXL362_ACCELEROMETER.ZDATA_FILE = "accelerometer_00_zdata.txt";
+   defparam `ADXL362_ACCELEROMETER.TEMPERATURE_FILE = "accelerometer_00_temperature_data.txt";
    
+      
    parameter number_of_tests = 3;
 
    reg  err;
@@ -32,7 +37,7 @@ module test_case ();
       @(posedge `WB_CLK);
       @(negedge `ADXL362_RESET);
 
-      #10000;
+      #20000;
       `TEST_COMPLETE;      
    end
 

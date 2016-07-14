@@ -28,6 +28,7 @@ module fpga (/*AUTOARG*/
 
    /*AUTOWIRE*/
    // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   wire                 active;                 // From spi_inst of spi.v
    wire                 clk;                    // From sys_con of system_controller.v
    wire                 clk_enable;             // From spi_inst of spi.v
    wire                 rst;                    // From sys_con of system_controller.v
@@ -35,6 +36,7 @@ module fpga (/*AUTOARG*/
    wire                 rx_empty;               // From spi_inst of spi.v
    wire                 rx_full;                // From spi_inst of spi.v
    wire                 rx_read;                // From spi_master of spi_controller.v
+   wire                 start;                  // From spi_master of spi_controller.v
    wire [7:0]           tx_data;                // From spi_master of spi_controller.v
    wire                 tx_empty;               // From spi_inst of spi.v
    wire                 tx_full;                // From spi_inst of spi.v
@@ -67,6 +69,7 @@ module fpga (/*AUTOARG*/
                              .rx_read           (rx_read),
                              .tx_write          (tx_write),
                              .tx_data           (tx_data[7:0]),
+                             .start             (start),
                              // Inputs
                              .clk               (clk),
                              .rst               (rst),
@@ -74,7 +77,8 @@ module fpga (/*AUTOARG*/
                              .rx_full           (rx_full),
                              .rx_empty          (rx_empty),
                              .tx_empty          (tx_empty),
-                             .tx_full           (tx_full));
+                             .tx_full           (tx_full),
+                             .active            (active));
    
    //
    // SPI
@@ -86,6 +90,7 @@ module fpga (/*AUTOARG*/
                 .ncs_o                  (ncs_o),
                 .mosi_o                 (mosi_o),
                 .clk_enable             (clk_enable),
+                .active                 (active),
                 .rx_data                (rx_data[7:0]),
                 .rx_full                (rx_full),
                 .rx_empty               (rx_empty),
@@ -93,9 +98,11 @@ module fpga (/*AUTOARG*/
                 .tx_full                (tx_full),
                 // Inputs
                 .miso_i                 (miso_i),
+                .sclk                   (sclk_o),
                 .clk                    (clk),
                 .rst                    (rst),
                 .enable                 (enable),
+                .start                  (start),
                 .rx_read                (rx_read),
                 .tx_write               (tx_write),
                 .tx_data                (tx_data[7:0]));

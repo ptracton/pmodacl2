@@ -26,6 +26,7 @@ module dump;
 `else	
 	    $dumpfile({test_name,".vcd"});
 	    $dumpvars(0, `TB);
+`ifndef RTL_SIM
         $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[0]);
         $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[1]);
         $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[2]);
@@ -33,7 +34,8 @@ module dump;
         $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[4]);
         $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[5]);
         $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[6]);
-        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[7]);        
+        $dumpvars(1, adxl362_testbench.adxl362.spi.fifo[7]);
+`endif
 `endif
 	      
      end // initial begin

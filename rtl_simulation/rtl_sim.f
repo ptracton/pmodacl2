@@ -1,16 +1,18 @@
++define+VERBOSE
++define+SIM
++define+RTL_SIM
+      
 +incdir+../testbench
 +incdir+../rtl_simulation
 +incdir+../rtl
 +incdir+../behavioral/verilog_utils/
 +incdir+../behavioral/adxl362/
-+incdir+/opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/
-+define+VERBOSE
-      +define+SIM
+//+incdir+/opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/
       
-/opt/Xilinx/Vivado/2015.2/data/verilog/src/glbl.v
-/opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/BUFG.v
-/opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/BUFGCE.v
-/opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/IBUF.v
+// /opt/Xilinx/Vivado/2015.2/data/verilog/src/glbl.v
+// /opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/BUFG.v
+// /opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/BUFGCE.v
+// /opt/Xilinx/Vivado/2015.2/data/verilog/src/unisims/IBUF.v
 
 
 ../testbench/spi_testbench.v
