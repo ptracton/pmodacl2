@@ -10,8 +10,7 @@
 
 module spi (/*AUTOARG*/
    // Outputs
-   ncs_o, mosi_o, clk_enable, active, rx_data, rx_full, rx_empty,
-   tx_empty, tx_full,
+   mosi_o, active, rx_data, rx_full, rx_empty, tx_empty, tx_full,
    // Inputs
    miso_i, sclk, clk, rst, enable, start, rx_read, tx_write, tx_data
    ) ;
@@ -19,7 +18,7 @@ module spi (/*AUTOARG*/
    //
    // SPI Side Interface
    //
-   output reg ncs_o;
+   
    output wire mosi_o;
    input  wire miso_i;
    input wire  sclk;
@@ -30,7 +29,6 @@ module spi (/*AUTOARG*/
    input wire  clk;
    input wire  rst;
    input wire  enable;
-   output reg  clk_enable = 0;
    output wire active;
    input wire  start;
    
@@ -55,7 +53,7 @@ module spi (/*AUTOARG*/
    reg [2:0]   bit_count_previous;
    assign mosi_o = tx_data[7-bit_count];
 
-   wire        spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
+   wire        spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);   
    wire        spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
    
    always @(posedge sclk or posedge rst)
@@ -70,10 +68,8 @@ module spi (/*AUTOARG*/
      end
 
    parameter STATE_IDLE = 3'h0;
-   parameter STATE_LOWER_NCS = 3'h1;
    parameter STATE_START_TRANSFER = 3'h2;
    parameter STATE_WAIT_TRANSFER_DONE = 3'h3;
-   parameter STATE_RAISE_NCS = 3'h4;
    
    reg [2:0] state;
    reg [2:0] next_state;
@@ -90,37 +86,23 @@ module spi (/*AUTOARG*/
       case (state)
 
         STATE_IDLE: begin
-           ncs_o = 1;
-           clk_enable = 0;           
            if (start) begin
-              next_state = STATE_LOWER_NCS;              
+              next_state = STATE_START_TRANSFER;              
            end else begin
               next_state = STATE_IDLE;              
            end
         end
 
-        STATE_LOWER_NCS: begin
-           ncs_o = 0;
-           next_state = STATE_START_TRANSFER;           
-        end
-
         STATE_START_TRANSFER:begin
-           clk_enable = 1;
            next_state = STATE_WAIT_TRANSFER_DONE;           
         end
 
         STATE_WAIT_TRANSFER_DONE:begin
            if (spi_byte_done) begin
-              next_state = STATE_RAISE_NCS;
-              clk_enable = 0;              
+              next_state = STATE_IDLE;
            end else begin
               next_state = STATE_WAIT_TRANSFER_DONE;              
            end
-        end
-
-        STATE_RAISE_NCS:begin
-           ncs_o = 1;
-           next_state = STATE_IDLE;           
         end
         
         default: next_state = STATE_IDLE;
@@ -128,5 +110,14 @@ module spi (/*AUTOARG*/
       endcase // case (state)
       
    end
+
+  reg [(40*8)-1:0] spi_state_name ="NONE";
+   always @(*)
+     case (state)
+       STATE_IDLE : spi_state_name = "IDLE";
+       STATE_START_TRANSFER : spi_state_name = "START TRANSFER";
+       STATE_WAIT_TRANSFER_DONE : spi_state_name = "WAIT DONE";
+       default: spi_state_name = "Default";       
+     endcase // case (state)
    
 endmodule // spi

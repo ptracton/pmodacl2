@@ -30,7 +30,7 @@ module fpga (/*AUTOARG*/
    // Beginning of automatic wires (for undeclared instantiated-module outputs)
    wire                 active;                 // From spi_inst of spi.v
    wire                 clk;                    // From sys_con of system_controller.v
-   wire                 clk_enable;             // From spi_inst of spi.v
+   wire                 clk_enable;             // From spi_master of spi_controller.v
    wire                 rst;                    // From sys_con of system_controller.v
    wire [7:0]           rx_data;                // From spi_inst of spi.v
    wire                 rx_empty;               // From spi_inst of spi.v
@@ -58,6 +58,7 @@ module fpga (/*AUTOARG*/
                              .clk_i             (clk_i),
                              .rst_i             (rst_i),
                              .clk_enable        (clk_enable));
+//                             .clk_enable        (~ncs_o));
    
    //
    // SPI Controller
@@ -70,6 +71,8 @@ module fpga (/*AUTOARG*/
                              .tx_write          (tx_write),
                              .tx_data           (tx_data[7:0]),
                              .start             (start),
+                             .ncs_o             (ncs_o),
+                             .clk_enable        (clk_enable),
                              // Inputs
                              .clk               (clk),
                              .rst               (rst),
@@ -87,9 +90,7 @@ module fpga (/*AUTOARG*/
    //
    spi spi_inst(/*AUTOINST*/
                 // Outputs
-                .ncs_o                  (ncs_o),
                 .mosi_o                 (mosi_o),
-                .clk_enable             (clk_enable),
                 .active                 (active),
                 .rx_data                (rx_data[7:0]),
                 .rx_full                (rx_full),

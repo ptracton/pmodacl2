@@ -37,7 +37,7 @@ module test_case ();
       @(posedge `WB_CLK);
       @(negedge `ADXL362_RESET);
 
-      #20000;
+      #220000;
       `TEST_COMPLETE;      
    end
 

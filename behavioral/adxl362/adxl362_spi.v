@@ -156,13 +156,15 @@ module adxl362_spi (/*AUTOARG*/
    always @(*) begin
       case (state)
         STATE_IDLE: begin
-           command = 0;
-           address = 0;
-           spi_data_out = 0;
-           data_write = 0;
-           write = 0;
-           first = 0;
-           read_data_fifo = 0;
+           if (nCS) begin
+              command = 0;
+              address = 0;
+              spi_data_out = 0;
+              data_write = 0;
+              write = 0;
+              first = 0;
+              read_data_fifo = 0;
+           end 
            
            if (! nCS) begin
               if (spi_byte_done) begin

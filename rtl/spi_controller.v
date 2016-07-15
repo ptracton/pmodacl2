@@ -9,10 +9,14 @@
 // Status          : Unknown, Use with caution!
 module spi_controller (/*AUTOARG*/
    // Outputs
-   rx_read, tx_write, tx_data, start,
+   rx_read, tx_write, tx_data, start, ncs_o, clk_enable,
    // Inputs
    clk, rst, rx_data, rx_full, rx_empty, tx_empty, tx_full, active
    ) ;
+
+   //
+   // System Interface
+   //
    input wire clk;
    input wire rst;
 
@@ -37,8 +41,9 @@ module spi_controller (/*AUTOARG*/
    //
    input wire   active;
    output reg   start;
-
-
+   output reg   ncs_o;
+   output reg   clk_enable;
+   
    parameter STATE_IDLE          = 3'h0;
    parameter STATE_SEND_COMMAND = 3'h1;
    parameter STATE_WAIT_COMMAND = 3'h2;
@@ -54,8 +59,9 @@ module spi_controller (/*AUTOARG*/
    wire         count_done;
    reg [7:0]    address;
    reg          first;
+   reg          clk_enable_async;
    
-   assign count_done = (count == 32'd1000);
+   assign count_done = (count == 32'd10000);
    
    always @(posedge clk)
      if (rst) begin
@@ -75,21 +81,28 @@ module spi_controller (/*AUTOARG*/
         state <= next_state;        
      end
 
+   always @(posedge clk)
+     clk_enable <= clk_enable_async;   
+   
    always @(*) begin
       case (state)
         STATE_IDLE: begin
            start = 0;
            tx_data = 0; 
            address = 8'h14;
-           first = 1;           
+           first = 1;
+           ncs_o = 1;     
+           clk_enable_async = 0;           
            if (count_done) begin
-              next_state = STATE_SEND_COMMAND;              
+              clk_enable_async = 1;              
+              next_state = STATE_SEND_COMMAND;
            end else begin
               next_state = STATE_IDLE;              
            end
         end
 
         STATE_SEND_COMMAND:begin
+           ncs_o = 0;           
            start = 1;
            tx_data = 8'h0B;  // Read Command
            next_state = STATE_WAIT_COMMAND;           
@@ -135,6 +148,14 @@ module spi_controller (/*AUTOARG*/
         end        
 
         STATE_END:begin
+           if (first) begin
+              first = 0;
+              address = address + 1;
+              next_state = STATE_SEND_COMMAND;
+              ncs_o = 1;              
+           end else begin
+              next_state = STATE_IDLE;
+           end
         end
         
         default: begin
@@ -143,5 +164,19 @@ module spi_controller (/*AUTOARG*/
       endcase // case (state)
       
    end
-     
+
+  reg [(40*8)-1:0] spi_controller_state_name ="NONE";
+   always @(*)
+     case (state)
+       STATE_IDLE         : spi_controller_state_name = "IDLE";
+       STATE_SEND_COMMAND : spi_controller_state_name = "SEND COMMAND";
+       STATE_WAIT_COMMAND : spi_controller_state_name = "WAIT COMMAND";
+       STATE_SEND_ADDRESS : spi_controller_state_name = "SEND ADDRESS";
+       STATE_WAIT_ADDRESS : spi_controller_state_name = "WAIT ADDRESS";
+       STATE_SEND_READ    : spi_controller_state_name = "SEND READ";
+       STATE_WAIT_READ    : spi_controller_state_name = "WAIT READ";
+       STATE_END          : spi_controller_state_name = "END";
+       default: spi_controller_state_name = "Default";       
+     endcase // case (state)
+   
 endmodule // spi_controller
