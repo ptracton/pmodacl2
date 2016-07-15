@@ -28,16 +28,17 @@ module fpga (/*AUTOARG*/
 
    /*AUTOWIRE*/
    // Beginning of automatic wires (for undeclared instantiated-module outputs)
-   wire [7:0]           address;                // From spi_master of spi_controller.v
+   wire [2:0]           bit_count;              // From spi_inst of spi.v
    wire                 clk;                    // From sys_con of system_controller.v
-   wire                 clk_enable;             // From spi_master of spi_controller.v, ...
-   wire [7:0]           command;                // From spi_master of spi_controller.v
+   wire                 clk_enable;             // From spi_master of spi_controller.v
    wire                 rst;                    // From sys_con of system_controller.v
-   wire [7:0]           rx_data;                // From spi_inst of spi.v
    wire                 spi_active;             // From spi_inst of spi.v
+   wire                 spi_byte_begin;         // From spi_inst of spi.v
+   wire                 spi_byte_done;          // From spi_inst of spi.v
+   wire [7:0]           spi_rx_data;            // From spi_inst of spi.v
+   wire [7:0]           spi_tx_data;            // From spi_master of spi_controller.v
    wire                 start;                  // From spi_master of spi_controller.v
-   wire                 state_machine_active;   // From spi_inst of spi.v
-   wire [7:0]           tx_data;                // From spi_master of spi_controller.v
+   wire [15:0]          temperature;            // From spi_master of spi_controller.v
    // End of automatics
 
 
@@ -64,17 +65,18 @@ module fpga (/*AUTOARG*/
    //
    spi_controller spi_master(/*AUTOINST*/
                              // Outputs
-                             .command           (command[7:0]),
-                             .address           (address[7:0]),
-                             .tx_data           (tx_data[7:0]),
+                             .spi_tx_data       (spi_tx_data[7:0]),
                              .start             (start),
                              .ncs_o             (ncs_o),
                              .clk_enable        (clk_enable),
+                             .temperature       (temperature[15:0]),
                              // Inputs
                              .clk               (clk),
                              .rst               (rst),
-                             .rx_data           (rx_data[7:0]),
-                             .spi_active        (spi_active),
+                             .spi_rx_data       (spi_rx_data[7:0]),
+                             .spi_byte_done     (spi_byte_done),
+                             .spi_byte_begin    (spi_byte_begin),
+                             .bit_count         (bit_count[2:0]),
                              .state_machine_active(state_machine_active));
    
    //
@@ -85,20 +87,18 @@ module fpga (/*AUTOARG*/
    spi spi_inst(/*AUTOINST*/
                 // Outputs
                 .mosi_o                 (mosi_o),
-                .clk_enable             (clk_enable),
-                .state_machine_active   (state_machine_active),
                 .spi_active             (spi_active),
-                .rx_data                (rx_data[7:0]),
+                .spi_rx_data            (spi_rx_data[7:0]),
+                .bit_count              (bit_count[2:0]),
+                .spi_byte_done          (spi_byte_done),
+                .spi_byte_begin         (spi_byte_begin),
                 // Inputs
                 .miso_i                 (miso_i),
-                .sclk                   (sclk),
+                .sclk_o                 (sclk_o),
+                .ncs_o                  (ncs_o),
                 .clk                    (clk),
                 .rst                    (rst),
-                .enable                 (enable),
-                .start                  (start),
-                .command                (command[7:0]),
-                .address                (address[7:0]),
-                .tx_data                (tx_data[7:0]));
+                .spi_tx_data            (spi_tx_data[7:0]));
    
    
 endmodule // fpga

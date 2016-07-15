@@ -52,24 +52,29 @@ module adxl362_spi (/*AUTOARG*/
    // Capture SPI data coming in.  The spec says this IC is always CPHA = 0 and CPOL = 0
    // so we can get away with this very simple solution.
    //
-
+   reg [7:0]       running_bit_count  =0;
+   
    always @(posedge SCLK or posedge nCS)
      if (nCS) begin
         bit_count <= 0;
-        bit_count_previous <= 0;        
+        bit_count_previous <= 7;        
         spi_data_in <= 0;
         MISO <= 0;        
      end else begin
         bit_count_previous <= bit_count;        
         bit_count <= bit_count + 1;
+        running_bit_count <= running_bit_count + 1;        
         spi_data_in <= {spi_data_in[6:0], MOSI};
         MISO <= spi_data_out[7-bit_count];
+//        MISO <= (`ADXL362_COMMAND_READ==command) ? data_read[7-bit_count] : data_rd[7-bit_count];
      end
 
-
-   wire spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
-   wire spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
+//
+//   wire spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
+//   wire spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
    
+   wire spi_byte_done =  (bit_count == 7);
+   wire spi_byte_begin = (bit_count == 0);
    
    //
    // Detect the edge and pulse write for a single clock while we
@@ -190,8 +195,9 @@ module adxl362_spi (/*AUTOARG*/
         STATE_READ_ADDRESS: begin
            if (spi_byte_done) begin
               address = spi_data_in;
+              spi_data_out = data_read;
               if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_START_DATA;
-              if (`ADXL362_COMMAND_READ == command) next_state = STATE_WAIT_START_READ_RESPONSE;
+              if (`ADXL362_COMMAND_READ == command)  next_state = STATE_WAIT_START_READ_RESPONSE;
            end else begin
               next_state = STATE_READ_ADDRESS;
            end
@@ -247,7 +253,7 @@ module adxl362_spi (/*AUTOARG*/
 
         STATE_WAIT_START_READ_RESPONSE:begin
            if (! nCS) begin
-              spi_data_out = data_read;
+//              spi_data_out = data_read;
               if (spi_byte_begin) begin
                  next_state = STATE_WAIT_DONE_READ_RESPONSE;              
               end else begin

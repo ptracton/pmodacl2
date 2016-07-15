@@ -57,7 +57,7 @@ module adxl362_system_controller (/*AUTOARG*/
    initial begin
       clk_sys <= 1'b0;
       forever begin
-         #25 clk_sys <= ~clk_sys;
+         #5 clk_sys <= ~clk_sys;
       end
    end
 

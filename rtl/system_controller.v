@@ -34,8 +34,11 @@ module system_controller (/*AUTOARG*/
 
    
    reg [2:0]   clk_count = 0;
-   reg         sclk_free = 0;   
+   reg         sclk_free = 0;  
+   
    assign sclk_o = (clk_enable) ? sclk_free: 1'b0;
+
+ 
    
    always @(posedge clk_i) begin
       if (rst_i) begin

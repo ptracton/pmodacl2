@@ -10,9 +10,10 @@
 
 module spi (/*AUTOARG*/
    // Outputs
-   mosi_o, clk_enable, state_machine_active, spi_active, rx_data,
+   mosi_o, spi_active, spi_rx_data, bit_count, spi_byte_done,
+   spi_byte_begin,
    // Inputs
-   miso_i, sclk, clk, rst, enable, start, command, address, tx_data
+   miso_i, sclk_o, ncs_o, clk, rst, spi_tx_data
    ) ;
 
    //
@@ -21,99 +22,43 @@ module spi (/*AUTOARG*/
    
    output wire mosi_o;
    input  wire miso_i;
-   input wire  sclk;
+   input wire  sclk_o;
+   input wire  ncs_o;
    
    //
    // Host Side Interface
    //
    input wire  clk;
    input wire  rst;
-   input wire  enable;
-   output reg  clk_enable = 0;
-   output wire state_machine_active;
    output wire spi_active;   
-   input wire  start;
-   input wire [7:0] command;
-   input wire [7:0] address;
-   input wire [7:0] tx_data;
-   output reg [7:0] rx_data;
-   
+   input wire [7:0] spi_tx_data;
+   output reg [7:0] spi_rx_data;
+   output reg [2:0] bit_count;
+   output wire      spi_byte_done;
+   output wire      spi_byte_begin;
 
-   reg [7:0]        spi_tx_data;   
-   reg [2:0]        bit_count;
+   
    reg [2:0]        bit_count_previous;
-   assign mosi_o = spi_tx_data[7-bit_count];
+   assign mosi_o = (ncs_o) ? 1'bz : spi_tx_data[7-bit_count];
    
-   wire        spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
-   wire        spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
-   assign      spi_active = |bit_count;
+//   assign      spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
+//   assign      spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
+
+   assign      spi_byte_done = (bit_count == 7);   
+   assign      spi_byte_begin = (bit_count == 0);
+
    
-   always @(posedge sclk or posedge rst)
+   always @(posedge sclk_o or posedge rst)
      if (rst) begin
         bit_count <= 0;
-        rx_data <= 0;  
+        spi_rx_data <= 0;  
         bit_count_previous <= 0;        
      end else begin
         bit_count <= bit_count + 1;
         bit_count_previous <= bit_count;        
-        rx_data[7-bit_count] <= miso_i;        
+        #1 spi_rx_data[7-bit_count] <= miso_i;        
      end
 
-   parameter STATE_IDLE = 3'h0;
-   parameter STATE_START_TRANSFER = 3'h2;
-   parameter STATE_WAIT_TRANSFER_DONE = 3'h3;
-
-   
-   reg [3:0] state;
-   reg [3:0] next_state;
-   
-   assign state_machine_active = (state != STATE_IDLE);
-   
-   always @(posedge clk)
-     if (rst) begin
-        state <= STATE_IDLE;        
-     end else begin
-        state <= next_state;        
-     end
-
-   always @(*) begin
-      case (state)
-
-        STATE_IDLE: begin
-
-           if (start) begin
-              next_state = STATE_START_TRANSFER;              
-           end else begin
-              next_state = STATE_IDLE;              
-           end
-        end
-       
-        STATE_START_TRANSFER:begin
-           clk_enable = 1;
-           next_state = STATE_WAIT_TRANSFER_DONE;           
-        end
-
-        STATE_WAIT_TRANSFER_DONE:begin
-           if (spi_byte_done) begin
-              next_state = STATE_IDLE;
-           end else begin
-              next_state = STATE_WAIT_TRANSFER_DONE;              
-           end
-        end
-        
-        default: next_state = STATE_IDLE;
-        
-      endcase // case (state)
-      
-   end
-
-  reg [(40*8)-1:0] spi_state_name ="NONE";
-   always @(*)
-     case (state)
-       STATE_IDLE : spi_state_name = "IDLE";
-       STATE_START_TRANSFER : spi_state_name = "START TRANSFER";
-       STATE_WAIT_TRANSFER_DONE : spi_state_name = "WAIT DONE";
-       default: spi_state_name = "Default";       
-     endcase // case (state)
+ 
    
 endmodule // spi
