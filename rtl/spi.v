@@ -10,9 +10,9 @@
 
 module spi (/*AUTOARG*/
    // Outputs
-   mosi_o, active, rx_data, rx_full, rx_empty, tx_empty, tx_full,
+   mosi_o, clk_enable, state_machine_active, spi_active, rx_data,
    // Inputs
-   miso_i, sclk, clk, rst, enable, start, rx_read, tx_write, tx_data
+   miso_i, sclk, clk, rst, enable, start, command, address, tx_data
    ) ;
 
    //
@@ -29,32 +29,24 @@ module spi (/*AUTOARG*/
    input wire  clk;
    input wire  rst;
    input wire  enable;
-   output wire active;
+   output reg  clk_enable = 0;
+   output wire state_machine_active;
+   output wire spi_active;   
    input wire  start;
-   
-   
-   //
-   // RX FIFO
-   //
-   input wire  rx_read;   
-   output reg [7:0] rx_data;
-   output wire       rx_full;
-   output wire       rx_empty;
-   
-   //
-   // TX FIFO
-   //
-   input wire  tx_write;
+   input wire [7:0] command;
+   input wire [7:0] address;
    input wire [7:0] tx_data;
-   output wire tx_empty;
-   output wire tx_full;
+   output reg [7:0] rx_data;
+   
 
-   reg [2:0]   bit_count;
-   reg [2:0]   bit_count_previous;
-   assign mosi_o = tx_data[7-bit_count];
-
-   wire        spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);   
+   reg [7:0]        spi_tx_data;   
+   reg [2:0]        bit_count;
+   reg [2:0]        bit_count_previous;
+   assign mosi_o = spi_tx_data[7-bit_count];
+   
+   wire        spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
    wire        spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
+   assign      spi_active = |bit_count;
    
    always @(posedge sclk or posedge rst)
      if (rst) begin
@@ -70,10 +62,12 @@ module spi (/*AUTOARG*/
    parameter STATE_IDLE = 3'h0;
    parameter STATE_START_TRANSFER = 3'h2;
    parameter STATE_WAIT_TRANSFER_DONE = 3'h3;
+
    
-   reg [2:0] state;
-   reg [2:0] next_state;
-   assign active = (state != STATE_IDLE);
+   reg [3:0] state;
+   reg [3:0] next_state;
+   
+   assign state_machine_active = (state != STATE_IDLE);
    
    always @(posedge clk)
      if (rst) begin
@@ -86,14 +80,16 @@ module spi (/*AUTOARG*/
       case (state)
 
         STATE_IDLE: begin
+
            if (start) begin
               next_state = STATE_START_TRANSFER;              
            end else begin
               next_state = STATE_IDLE;              
            end
         end
-
+       
         STATE_START_TRANSFER:begin
+           clk_enable = 1;
            next_state = STATE_WAIT_TRANSFER_DONE;           
         end
 

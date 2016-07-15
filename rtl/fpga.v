@@ -28,19 +28,16 @@ module fpga (/*AUTOARG*/
 
    /*AUTOWIRE*/
    // Beginning of automatic wires (for undeclared instantiated-module outputs)
-   wire                 active;                 // From spi_inst of spi.v
+   wire [7:0]           address;                // From spi_master of spi_controller.v
    wire                 clk;                    // From sys_con of system_controller.v
-   wire                 clk_enable;             // From spi_master of spi_controller.v
+   wire                 clk_enable;             // From spi_master of spi_controller.v, ...
+   wire [7:0]           command;                // From spi_master of spi_controller.v
    wire                 rst;                    // From sys_con of system_controller.v
    wire [7:0]           rx_data;                // From spi_inst of spi.v
-   wire                 rx_empty;               // From spi_inst of spi.v
-   wire                 rx_full;                // From spi_inst of spi.v
-   wire                 rx_read;                // From spi_master of spi_controller.v
+   wire                 spi_active;             // From spi_inst of spi.v
    wire                 start;                  // From spi_master of spi_controller.v
+   wire                 state_machine_active;   // From spi_inst of spi.v
    wire [7:0]           tx_data;                // From spi_master of spi_controller.v
-   wire                 tx_empty;               // From spi_inst of spi.v
-   wire                 tx_full;                // From spi_inst of spi.v
-   wire                 tx_write;               // From spi_master of spi_controller.v
    // End of automatics
 
 
@@ -67,8 +64,8 @@ module fpga (/*AUTOARG*/
    //
    spi_controller spi_master(/*AUTOINST*/
                              // Outputs
-                             .rx_read           (rx_read),
-                             .tx_write          (tx_write),
+                             .command           (command[7:0]),
+                             .address           (address[7:0]),
                              .tx_data           (tx_data[7:0]),
                              .start             (start),
                              .ncs_o             (ncs_o),
@@ -77,11 +74,8 @@ module fpga (/*AUTOARG*/
                              .clk               (clk),
                              .rst               (rst),
                              .rx_data           (rx_data[7:0]),
-                             .rx_full           (rx_full),
-                             .rx_empty          (rx_empty),
-                             .tx_empty          (tx_empty),
-                             .tx_full           (tx_full),
-                             .active            (active));
+                             .spi_active        (spi_active),
+                             .state_machine_active(state_machine_active));
    
    //
    // SPI
@@ -91,21 +85,19 @@ module fpga (/*AUTOARG*/
    spi spi_inst(/*AUTOINST*/
                 // Outputs
                 .mosi_o                 (mosi_o),
-                .active                 (active),
+                .clk_enable             (clk_enable),
+                .state_machine_active   (state_machine_active),
+                .spi_active             (spi_active),
                 .rx_data                (rx_data[7:0]),
-                .rx_full                (rx_full),
-                .rx_empty               (rx_empty),
-                .tx_empty               (tx_empty),
-                .tx_full                (tx_full),
                 // Inputs
                 .miso_i                 (miso_i),
-                .sclk                   (sclk_o),
+                .sclk                   (sclk),
                 .clk                    (clk),
                 .rst                    (rst),
                 .enable                 (enable),
                 .start                  (start),
-                .rx_read                (rx_read),
-                .tx_write               (tx_write),
+                .command                (command[7:0]),
+                .address                (address[7:0]),
                 .tx_data                (tx_data[7:0]));
    
    

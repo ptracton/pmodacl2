@@ -9,9 +9,9 @@
 // Status          : Unknown, Use with caution!
 module spi_controller (/*AUTOARG*/
    // Outputs
-   rx_read, tx_write, tx_data, start, ncs_o, clk_enable,
+   command, address, tx_data, start, ncs_o, clk_enable,
    // Inputs
-   clk, rst, rx_data, rx_full, rx_empty, tx_empty, tx_full, active
+   clk, rst, rx_data, spi_active, state_machine_active
    ) ;
 
    //
@@ -20,26 +20,17 @@ module spi_controller (/*AUTOARG*/
    input wire clk;
    input wire rst;
 
-   //
-   // RX FIFO
-   //
-   output wire rx_read;   
-   input wire [7:0] rx_data;
-   input wire       rx_full;
-   input wire       rx_empty;
-   
-   //
-   // TX FIFO
-   //
-   output wire  tx_write;
+   output reg [7:0] command;
+   output reg [7:0] address;
    output reg [7:0] tx_data;
-   input wire   tx_empty;
-   input wire   tx_full;
-
+   input wire [7:0] rx_data;
+   
+   
    //
    // SPI Interface
    //
-   input wire   active;
+   input wire   spi_active;
+   input wire   state_machine_active;   
    output reg   start;
    output reg   ncs_o;
    output reg   clk_enable;
@@ -57,7 +48,6 @@ module spi_controller (/*AUTOARG*/
    reg [2:0]    next_state;
    reg [31:0]   count;
    wire         count_done;
-   reg [7:0]    address;
    reg          first;
    reg          clk_enable_async;
    
@@ -104,12 +94,12 @@ module spi_controller (/*AUTOARG*/
         STATE_SEND_COMMAND:begin
            ncs_o = 0;           
            start = 1;
-           tx_data = 8'h0B;  // Read Command
+           command = 8'h0B;  // Read Command
            next_state = STATE_WAIT_COMMAND;           
         end
 
         STATE_WAIT_COMMAND:begin
-           if (active) begin
+           if (spi_active) begin
               start = 0;           
               next_state = STATE_WAIT_COMMAND;              
            end else begin
@@ -118,13 +108,18 @@ module spi_controller (/*AUTOARG*/
         end
 
         STATE_SEND_ADDRESS:begin
-           start = 1;           
-           tx_data = address;
+           start = 1;
+           if (first) begin
+              address = 8'h14;
+              first = 0;
+           end else begin
+              address = 8'h15;
+           end
            next_state = STATE_WAIT_ADDRESS;           
         end
 
         STATE_WAIT_ADDRESS:begin
-           if (active) begin
+           if (spi_active) begin
               start = 0;           
               next_state = STATE_WAIT_ADDRESS;              
            end else begin
@@ -139,7 +134,7 @@ module spi_controller (/*AUTOARG*/
         end
 
         STATE_WAIT_READ:begin
-           if (active) begin
+           if (spi_active) begin
               start = 0;           
               next_state = STATE_WAIT_READ;              
            end else begin
