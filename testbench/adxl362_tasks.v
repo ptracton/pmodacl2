@@ -95,7 +95,7 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          
          repeat(2) @(posedge `WB_CLK);
          `ADXL362_NCS = 1;
-         repeat(5)  @(posedge `WB_CLK);
+         repeat(100)  @(posedge `WB_CLK);
       end
    endtask //
 
@@ -197,7 +197,7 @@ module adxl362_tasks (/*AUTOARG*/ ) ;
          //
          // End CS
          //
-         repeat(2) @(posedge `WB_CLK);
+         repeat(10) @(posedge `WB_CLK);
          `ADXL362_NCS = 1;
          repeat(5)  @(posedge `WB_CLK);
       end
