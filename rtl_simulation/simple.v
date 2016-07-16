@@ -24,7 +24,7 @@ module test_case ();
    defparam `ADXL362_ACCELEROMETER.TEMPERATURE_FILE = "accelerometer_00_temperature_data.txt";
    
       
-   parameter number_of_tests = 3;
+   parameter number_of_tests = 1;
 
    reg  err;
    reg [31:0] data_out;
@@ -37,6 +37,12 @@ module test_case ();
       @(posedge `WB_CLK);
       @(negedge `ADXL362_RESET);
 
+      @(posedge spi_testbench.ncs);
+      @(posedge spi_testbench.ncs);
+      @(posedge spi_testbench.ncs);
+      `TEST_COMPARE("TEMPERATURE",  16'h02A5, spi_testbench.dut.temperature);
+      
+      
       #220000;
       `TEST_COMPLETE;      
    end

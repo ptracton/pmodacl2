@@ -20,6 +20,7 @@ module adxl362_spi (/*AUTOARG*/
    input wire MOSI;
    input wire nCS;
    output reg MISO;
+//   output wire MISO;
    input wire clk_sys;
    
    output reg [5:0] address;
@@ -53,28 +54,27 @@ module adxl362_spi (/*AUTOARG*/
    // so we can get away with this very simple solution.
    //
    reg [7:0]       running_bit_count  =0;
-   
+//   assign MISO = (nCS) ? 1'bz : spi_data_out[7-bit_count];
    always @(posedge SCLK or posedge nCS)
      if (nCS) begin
         bit_count <= 0;
-        bit_count_previous <= 7;        
+        bit_count_previous <= 0;        
         spi_data_in <= 0;
-        MISO <= 0;        
+        MISO <= 1'bz;        
      end else begin
         bit_count_previous <= bit_count;        
         bit_count <= bit_count + 1;
         running_bit_count <= running_bit_count + 1;        
         spi_data_in <= {spi_data_in[6:0], MOSI};
         MISO <= spi_data_out[7-bit_count];
-//        MISO <= (`ADXL362_COMMAND_READ==command) ? data_read[7-bit_count] : data_rd[7-bit_count];
      end
 
 //
-//   wire spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
-//   wire spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
+   wire spi_byte_done = (bit_count == 0) && (bit_count_previous == 7);
+   wire spi_byte_begin = (bit_count == 1) && (bit_count_previous == 0);
    
-   wire spi_byte_done =  (bit_count == 7);
-   wire spi_byte_begin = (bit_count == 0);
+//   wire spi_byte_done =  (bit_count == 7);
+//   wire spi_byte_begin = (bit_count == 0);
    
    //
    // Detect the edge and pulse write for a single clock while we
@@ -185,7 +185,9 @@ module adxl362_spi (/*AUTOARG*/
         end // case: STATE_IDLE
 
         STATE_WAIT_START_ADDRESS: begin
-           if (spi_byte_begin) begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else if (spi_byte_begin) begin
               next_state = STATE_READ_ADDRESS;
            end else begin
               next_state = STATE_WAIT_START_ADDRESS;              
@@ -193,9 +195,11 @@ module adxl362_spi (/*AUTOARG*/
         end
 
         STATE_READ_ADDRESS: begin
-           if (spi_byte_done) begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else if (spi_byte_done) begin
               address = spi_data_in;
-              spi_data_out = data_read;
+//              spi_data_out = data_read;
               if (`ADXL362_COMMAND_WRITE == command) next_state = STATE_WAIT_START_DATA;
               if (`ADXL362_COMMAND_READ == command)  next_state = STATE_WAIT_START_READ_RESPONSE;
            end else begin
@@ -216,7 +220,9 @@ module adxl362_spi (/*AUTOARG*/
         end
 
         STATE_READ_DATA:begin
-           if (spi_byte_done) begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else if (spi_byte_done) begin
               data_write = spi_data_in;  
               next_state = STATE_WRITE_REGISTER;
            end else begin
@@ -253,7 +259,7 @@ module adxl362_spi (/*AUTOARG*/
 
         STATE_WAIT_START_READ_RESPONSE:begin
            if (! nCS) begin
-//              spi_data_out = data_read;
+              spi_data_out = data_read;
               if (spi_byte_begin) begin
                  next_state = STATE_WAIT_DONE_READ_RESPONSE;              
               end else begin
@@ -265,13 +271,19 @@ module adxl362_spi (/*AUTOARG*/
         end // case: STATE_WAIT_START_READ_RESPONSE        
 
         STATE_WAIT_DONE_READ_RESPONSE: begin
-           if (spi_byte_done) begin
-              first = 1;              
-              next_state = STATE_READ_INCREMENT_ADDRESS;              
+           if (!nCS) begin
+              if (spi_byte_done) begin
+                 first = 1;              
+                 next_state = STATE_READ_INCREMENT_ADDRESS;              
+              end else begin
+                 next_state = STATE_WAIT_DONE_READ_RESPONSE;              
+              end
            end else begin
-              next_state = STATE_WAIT_DONE_READ_RESPONSE;              
+              next_state = STATE_IDLE;              
            end
-        end
+        end // case: STATE_WAIT_DONE_READ_RESPONSE
+        
+           
 
         STATE_READ_INCREMENT_ADDRESS: begin
            if (nCS) begin
@@ -308,7 +320,9 @@ module adxl362_spi (/*AUTOARG*/
         end
 
         STATE_WAIT_DONE_FIFO_RESPONSE_LOW:begin
-           if (spi_byte_done) begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else if (spi_byte_done) begin
               next_state = STATE_WAIT_START_FIFO_READ_HIGH;              
            end else begin
               next_state = STATE_WAIT_DONE_FIFO_RESPONSE_LOW;              
@@ -327,7 +341,9 @@ module adxl362_spi (/*AUTOARG*/
 
 
         STATE_WAIT_START_FIFO_RESPONSE_HIGH: begin
-           if (spi_byte_begin) begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else if (spi_byte_begin) begin
               next_state = STATE_WAIT_DONE_FIFO_RESPONSE_HIGH;              
            end else begin
               next_state = STATE_WAIT_START_FIFO_RESPONSE_HIGH;              
@@ -335,7 +351,9 @@ module adxl362_spi (/*AUTOARG*/
         end
 
         STATE_WAIT_DONE_FIFO_RESPONSE_HIGH:begin
-           if (spi_byte_done) begin
+           if (nCS) begin
+              next_state = STATE_IDLE;              
+           end else if (spi_byte_done) begin
               next_state = STATE_POP_FIFO;              
            end else begin
               next_state = STATE_WAIT_DONE_FIFO_RESPONSE_HIGH;              

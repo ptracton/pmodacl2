@@ -32,7 +32,6 @@ module fpga (/*AUTOARG*/
    wire                 clk;                    // From sys_con of system_controller.v
    wire                 clk_enable;             // From spi_master of spi_controller.v
    wire                 rst;                    // From sys_con of system_controller.v
-   wire                 spi_active;             // From spi_inst of spi.v
    wire                 spi_byte_begin;         // From spi_inst of spi.v
    wire                 spi_byte_done;          // From spi_inst of spi.v
    wire [7:0]           spi_rx_data;            // From spi_inst of spi.v
@@ -87,7 +86,6 @@ module fpga (/*AUTOARG*/
    spi spi_inst(/*AUTOINST*/
                 // Outputs
                 .mosi_o                 (mosi_o),
-                .spi_active             (spi_active),
                 .spi_rx_data            (spi_rx_data[7:0]),
                 .bit_count              (bit_count[2:0]),
                 .spi_byte_done          (spi_byte_done),

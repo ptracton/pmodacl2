@@ -32,7 +32,11 @@ module test_case ();
       @(negedge `WB_RST);
       @(posedge `WB_CLK);
       @(negedge `ADXL362_RESET);
-      `SIMPLE_SPI_INIT;      
+      `SIMPLE_SPI_INIT;
+
+      #30000;
+      
+      
 //      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_LOW, 8'h7);
 //      `ADXL362_WRITE_REGISTER(`ADXL362_THRESH_ACT_HIGH, 8'h65);
       `ADXL362_WRITE_DOUBLE_REGISTER(`ADXL362_THRESH_ACT_LOW, 16'h6507);
