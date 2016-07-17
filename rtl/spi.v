@@ -20,6 +20,7 @@ module spi (/*AUTOARG*/
    //
    
    output wire mosi_o;
+//   output reg mosi_o;
    input  wire miso_i;
    input wire  sclk_o;
    input wire  ncs_o;
@@ -30,7 +31,7 @@ module spi (/*AUTOARG*/
    input wire  clk;
    input wire  rst;
    input wire [7:0] spi_tx_data;
-   output reg [7:0] spi_rx_data;
+   output reg [7:0] spi_rx_data=0;
    output reg [2:0] bit_count;
    output wire      spi_byte_done;
    output wire      spi_byte_begin;
@@ -47,17 +48,19 @@ module spi (/*AUTOARG*/
    assign      spi_byte_begin = (bit_count == 0);
 
    
-   always @(posedge sclk_o or posedge rst)
-     if (rst) begin
-        bit_count <= -1;
+   always @(negedge sclk_o or posedge ncs_o)
+     if (ncs_o) begin
+        bit_count <= 0;
         spi_rx_data <= 0;  
-        bit_count_previous <= -1;   
-        spi_running_bit_cout <= -1;     
+        bit_count_previous <= 0;   
+        spi_running_bit_cout <= 0;
+        //mosi_o <= 1'bz;        
      end else begin
         bit_count <= bit_count + 1;
         bit_count_previous <= bit_count;        
-        #1 spi_rx_data[7-bit_count] <= miso_i;
-        spi_running_bit_cout <= spi_running_bit_cout + 1;        
+        spi_rx_data[7-bit_count] <= miso_i;
+        spi_running_bit_cout <= spi_running_bit_cout + 1;      
+        //mosi_o <= spi_tx_data[7-bit_count];  
      end
 
  

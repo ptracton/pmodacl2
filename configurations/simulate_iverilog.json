@@ -20,9 +20,9 @@
 	          "arguments" : " -f rtl_sim.f $simulation +define+ICARUS "	
 	      },
 	      "run" : {
-	          "executable" : "./a.out",
-	          "arguments"  : " "
+	          "executable" : "vvp",
+	          "arguments"  : "-l $simulation.log a.out"
 	      }
     },
-    "remove_files": "hack.vh *.vcd a.out"
+    "remove_files": "hack.vh *.vcd a.out *.log"
 }
