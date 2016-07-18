@@ -44,6 +44,7 @@
 .simvision/
 INCA_libs/
 *.shm/
+*.sv
 
 # Xilinx Files
 *.jou

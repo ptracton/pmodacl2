@@ -30,7 +30,7 @@ module spi_testbench (/*AUTOARG*/ ) ;
       
    fpga dut(
             // Outputs
-            .sclk_o(sck), 
+            .sck_o(sck), 
             .ncs_o(ncs), 
             .mosi_o(mosi),
             // Inputs

@@ -43,7 +43,7 @@ module test_case ();
       `TEST_COMPARE("TEMPERATURE",  16'h02A5, spi_testbench.dut.temperature);
       
       
-      #220000;
+      #1000;
       `TEST_COMPLETE;      
    end
 

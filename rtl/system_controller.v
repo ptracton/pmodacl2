@@ -10,18 +10,17 @@
 
 module system_controller (/*AUTOARG*/
    // Outputs
-   clk, rst, sclk_o,
+   clk, rst, nrst,
    // Inputs
-   clk_i, rst_i, clk_enable
+   clk_i, rst_i
    ) ;
    input wire clk_i;
    input wire rst_i;
-   input wire clk_enable;
 
    output wire clk;
    output wire rst;
-   output wire sclk_o;
-
+   output wire nrst;
+   
 `ifdef XILINX
    //
    // Input buffer the clk pin
@@ -33,27 +32,13 @@ module system_controller (/*AUTOARG*/
    assign clk = clk_i;
 
    
-   reg [2:0]   clk_count = 0;
-   reg         sclk_free = 0;  
-   
-   assign sclk_o = (clk_enable) ? sclk_free: 1'b0;
 
- 
-   
-   always @(posedge clk_i) begin
-      if (rst_i) begin
-         clk_count <=0;
-         sclk_free <= 0;         
-      end else begin
-         clk_count <= clk_count + 1;
-         if (&clk_count)begin
-            sclk_free <= ~sclk_free;         
-         end         
-      end
-   end
+
    
    reg [4:0] reset_count =0;
-   assign rst = |reset_count;   
+   assign rst = |reset_count; 
+   assign nrst = ~rst;
+   
    always @(posedge clk_i or posedge rst_i)
      if (rst_i) begin
         reset_count <= 1;        
