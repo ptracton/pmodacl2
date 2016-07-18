@@ -259,7 +259,7 @@ module adxl362_spi (/*AUTOARG*/
 
         STATE_WAIT_START_READ_RESPONSE:begin
            if (! nCS) begin
-//              spi_data_out = data_read;
+              spi_data_out = data_read;  //Needed for burst mode
               if (spi_byte_begin) begin
                  next_state = STATE_WAIT_DONE_READ_RESPONSE;              
               end else begin
