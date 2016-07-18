@@ -28,21 +28,21 @@ module fpga (/*AUTOARG*/
 
    /*AUTOWIRE*/
    // Beginning of automatic wires (for undeclared instantiated-module outputs)
-   wire                 clear_spif;             // From controller of spi_controller_modified.v
-   wire                 clear_wcol;             // From controller of spi_controller_modified.v
+   wire                 clear_spif;             // From controller of spi_controller.v
+   wire                 clear_wcol;             // From controller of spi_controller.v
    wire                 clk;                    // From sys_con of system_controller.v
    wire                 inta_o;                 // From spi of simple_spi_top_modified.v
    wire                 nrst;                   // From sys_con of system_controller.v
    wire [7:0]           rfdout;                 // From spi of simple_spi_top_modified.v
-   wire                 rfre;                   // From controller of spi_controller_modified.v
+   wire                 rfre;                   // From controller of spi_controller.v
    wire                 rst;                    // From sys_con of system_controller.v
-   wire [7:0]           spcr;                   // From controller of spi_controller_modified.v
-   wire [7:0]           sper;                   // From controller of spi_controller_modified.v
+   wire [7:0]           spcr;                   // From controller of spi_controller.v
+   wire [7:0]           sper;                   // From controller of spi_controller.v
    wire [7:0]           spsr;                   // From spi of simple_spi_top_modified.v
-   wire [15:0]          temperature;            // From controller of spi_controller_modified.v
-   wire [7:0]           wfdin;                  // From controller of spi_controller_modified.v
-   wire                 wfwe;                   // From controller of spi_controller_modified.v
-   wire                 wr_spsr;                // From controller of spi_controller_modified.v
+   wire [15:0]          temperature;            // From controller of spi_controller.v
+   wire [7:0]           wfdin;                  // From controller of spi_controller.v
+   wire                 wfwe;                   // From controller of spi_controller.v
+   wire                 wr_spsr;                // From controller of spi_controller.v
    // End of automatics
 
 
@@ -65,42 +65,26 @@ module fpga (/*AUTOARG*/
    //
    // This is a state machine to control interfacing with the ADXL362
    //
-/* -----\/----- EXCLUDED -----\/-----
-   spi_controller spi_master(/-*AUTOINST*-/
+
+
+   spi_controller controller(/*AUTOINST*/
                              // Outputs
-                             .spi_tx_data       (spi_tx_data[7:0]),
-                             .start             (start),
+                             .wfdin             (wfdin[7:0]),
+                             .spcr              (spcr[7:0]),
+                             .sper              (sper[7:0]),
+                             .wfwe              (wfwe),
+                             .rfre              (rfre),
+                             .wr_spsr           (wr_spsr),
+                             .clear_spif        (clear_spif),
+                             .clear_wcol        (clear_wcol),
                              .ncs_o             (ncs_o),
-                             .clk_enable        (clk_enable),
                              .temperature       (temperature[15:0]),
                              // Inputs
                              .clk               (clk),
                              .rst               (rst),
-                             .spi_rx_data       (spi_rx_data[7:0]),
-                             .spi_byte_done     (spi_byte_done),
-                             .spi_byte_begin    (spi_byte_begin),
-                             .bit_count         (bit_count[2:0]),
-                             .state_machine_active(state_machine_active));
- -----/\----- EXCLUDED -----/\----- */
-
-   spi_controller_modified controller(/*AUTOINST*/
-                                      // Outputs
-                                      .wfdin            (wfdin[7:0]),
-                                      .spcr             (spcr[7:0]),
-                                      .sper             (sper[7:0]),
-                                      .wfwe             (wfwe),
-                                      .rfre             (rfre),
-                                      .wr_spsr          (wr_spsr),
-                                      .clear_spif       (clear_spif),
-                                      .clear_wcol       (clear_wcol),
-                                      .ncs_o            (ncs_o),
-                                      .temperature      (temperature[15:0]),
-                                      // Inputs
-                                      .clk              (clk),
-                                      .rst              (rst),
-                                      .rfdout           (rfdout[7:0]),
-                                      .inta_o           (inta_o),
-                                      .spsr             (spsr[7:0]));
+                             .rfdout            (rfdout[7:0]),
+                             .inta_o            (inta_o),
+                             .spsr              (spsr[7:0]));
    
    
    
@@ -109,22 +93,6 @@ module fpga (/*AUTOARG*/
    //
    // This is the SPI module that handles communication with ADXL362
    //
-/* -----\/----- EXCLUDED -----\/-----
-   spi spi_inst(/-*AUTOINST*-/
-                // Outputs
-                .mosi_o                 (mosi_o),
-                .spi_rx_data            (spi_rx_data[7:0]),
-                .bit_count              (bit_count[2:0]),
-                .spi_byte_done          (spi_byte_done),
-                .spi_byte_begin         (spi_byte_begin),
-                // Inputs
-                .miso_i                 (miso_i),
-                .sclk_o                 (sclk_o),
-                .ncs_o                  (ncs_o),
-                .clk                    (clk),
-                .rst                    (rst),
-                .spi_tx_data            (spi_tx_data[7:0]));
- -----/\----- EXCLUDED -----/\----- */
    simple_spi_top_modified spi(/*AUTOINST*/
                                // Outputs
                                .spsr            (spsr[7:0]),

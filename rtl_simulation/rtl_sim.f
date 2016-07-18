@@ -29,10 +29,8 @@
 ../behavioral/adxl362/adxl362_accelerometer.v      
 
 ../rtl/fpga.v
-//../rtl/spi_controller.v
-../rtl/spi_controller_modified.v
+../rtl/spi_controller.v
 ../rtl/spi_fifo.v
-//../rtl/spi.v
 ../rtl/simple_spi_top_modified.v
 ../rtl/fifo4.v
 ../rtl/system_controller.v      
