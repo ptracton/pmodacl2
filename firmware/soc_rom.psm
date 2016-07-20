@@ -1,0 +1,284 @@
+;;;
+;;; lab8_rom.psm
+;;; 
+;;; Look at https://code.google.com/p/opbasm/
+;;; opbasm -i lab9_rom.psm -t ROM_form.v -6
+
+    
+    ;;
+    ;; These are the registers in the various GPIO Blocks
+    ;; 
+    constant SW0_OEN,      00
+    constant SW0_DATA,     01
+    constant SW0_CONTROL,  02
+    constant SW0_IRQ_MASK, 03
+    constant SW0_IRQ,      04  
+    constant SW0_DEBOUNCE, 05
+        
+    constant SW1_OEN,      10
+    constant SW1_DATA,     11
+    constant SW1_CONTROL,  12
+    constant SW1_IRQ_MASK, 13
+    constant SW1_IRQ,      14  
+    constant SW1_DEBOUNCE, 15
+        
+    constant LED0_OEN,      20
+    constant LED0_DATA,     21
+    constant LED0_CONTROL,  22
+    constant LED0_IRQ_MASK, 23
+    constant LED0_IRQ,      24  
+    constant LED0_DEBOUNCE, 25
+        
+    constant LED1_OEN,      30
+    constant LED1_DATA,     31
+    constant LED1_CONTROL,  32
+    constant LED1_IRQ_MASK, 33
+    constant LED1_IRQ,      34  
+    constant LED1_DEBOUNCE, 35
+        
+    constant UART_DATA,     40
+    constant UART_CONTROL,  41
+    constant UART_STATUS,   42
+    constant UART_IRQ_MASK, 43
+    constant UART_IRQ,      44
+    constant UART_BAUD_LOW, 45
+    constant UART_BAUD_HI,  46
+
+    constant DISPLAY_SEGMENT0,  50
+    constant DISPLAY_SEGMENT1,  51
+    constant DISPLAY_SEGMENT2,  52
+    constant DISPLAY_SEGMENT3,  53       
+
+    constant BUTTONS_OEN,      60
+    constant BUTTONS_DATA,     61
+    constant BUTTONS_CONTROL,  62
+    constant BUTTONS_IRQ_MASK, 63
+    constant BUTTONS_IRQ,      64  
+    constant BUTTONS_DEBOUNCE, 65
+    constant BUTTONS_SIGNAL,   66
+        
+start:
+
+    load sD, 20
+    store sD, 00    
+    call LEDS_INIT
+
+    load sD, 30
+    store sD, 00    
+    call LEDS_INIT    
+        
+    load sD, 00
+    store sD, 00    
+    call GPIO_INIT
+
+    load sD, 10
+    store sD, 00    
+    call GPIO_INIT
+
+    load sD, 60
+    store sD, 00    
+    call BUTTONS_INIT
+        
+    call UART_INIT
+
+    call DISPLAY_INIT
+    
+    ;;
+    ;; Allow interrupts to be processed
+    ;; 
+    ENABLE INTERRUPT   
+
+    load sF, 00
+loop:
+
+    input s1, SW0_DATA
+    output s1, LED0_DATA
+   
+    input s1, SW1_DATA
+    output s1, LED1_DATA
+
+UP_BUTTON:    
+    test sE, 01
+    jump Z, RIGHT_BUTTON
+
+    and sE, FE
+    load sC, 55                 ; 'U'
+    call PUTCHAR   
+    load sC, 70                 ; 'p'
+    call PUTCHAR   
+
+RIGHT_BUTTON:
+    test sE, 02
+    jump Z, DOWN_BUTTON
+
+    and sE, 01 
+    load sC, 52                 ; 'R'
+    call PUTCHAR   
+    load sC, 69                 ; 'i'
+    call PUTCHAR       
+    load sC, 67                 ; 'g'
+    call PUTCHAR   
+    load sC, 68                 ; 'h'
+    call PUTCHAR       
+    load sC, 74                 ; 't'
+    call PUTCHAR       
+    
+    
+DOWN_BUTTON:
+    test sE, 04
+    jump Z, LEFT_BUTTON
+
+    and sE, FB
+    load sC, 44                 ; 'D'
+    call PUTCHAR   
+    load sC, 6F                 ; 'o'
+    call PUTCHAR       
+    load sC, 77                 ; 'w'
+    call PUTCHAR   
+    load sC, 6E                 ; 'n'
+    call PUTCHAR       
+    
+LEFT_BUTTON:
+    test sE, 08
+    jump Z, JUMP_LOOP
+
+    and sE, F7    
+    load sC, 4C                 ; 'L'
+    call PUTCHAR   
+    load sC, 65                 ; 'e'
+    call PUTCHAR       
+    load sC, 66                 ; 'f'
+    call PUTCHAR   
+    load sC, 74                 ; 't'
+    call PUTCHAR       
+
+JUMP_LOOP:
+    load sE, 00
+    jump loop
+
+GPIO_INIT:
+   ;; Get the offset for this LED
+    fetch sA, 00
+
+    ;; Write 00 to the OEN reg to make them inputs
+    load s0, 00
+    output S0, sA
+
+    return    
+    
+LEDS_INIT:
+    ;; Get the offset for this LED
+    fetch sA, 00
+
+    ;; Write FF to the OEN reg to make them outputs
+    load s0, FF
+    output S0, sA
+
+    ;; Turn off all the LEDS
+    load s0, 00
+    add sA, 01
+    output S0, sA
+    
+    return
+        
+BUTTONS_INIT:
+    ;; Buttons are all inputs
+    load s0,00
+    output s0, BUTTONS_OEN
+
+    load s0, 0F
+    output s0, BUTTONS_DEBOUNCE
+    
+    return
+UART_INIT:
+    ;;   
+    ;; Set up UART Baud Rate
+    ;; 
+    load S0, 35
+    output S0, UART_BAUD_LOW
+    
+    return
+
+PUTCHAR:
+    output SC, UART_DATA
+PUTCHAR_WAIT:
+    ;; Wait for tx_data_present to be a zero
+    input sB, UART_STATUS
+    test sB, 08
+    jump C, PUTCHAR_WAIT
+    return
+    
+DISPLAY_INIT:
+    load S0, DISPLAY_SEGMENT0
+    output S0,00
+
+    load S0, DISPLAY_SEGMENT1
+    output S0,00
+
+    load S0, DISPLAY_SEGMENT2
+    output S0,00
+
+    load S0, DISPLAY_SEGMENT3
+    output S0,00
+
+    return
+    
+IRQ_HANDLER:
+    input s1, UART_STATUS
+    test s1, 01
+    jump z, BUTTON_IRQ_HANDLER
+    
+    input S9, UART_DATA
+    output S9, UART_DATA
+    
+    ;; if less than 0x30 (ascii '0') don't update
+    ;; the 7 segment displays
+    compare s9, 30
+    jump C, IRQ_HANDLER_RETURN
+    
+    ;; if greater than 0x39 (ascii '9') don't update
+    ;; the 7 segment display
+    compare s9, 39
+    jump Z, UPDATE_DISPLAY
+    jump C, UPDATE_DISPLAY
+    jump BUTTON_IRQ_HANDLER
+
+    
+UPDATE_DISPLAY: 
+    ;; Shift 7 ssegment display over
+    input s2,  DISPLAY_SEGMENT2
+    output s2,  DISPLAY_SEGMENT3
+    
+    input s2,  DISPLAY_SEGMENT1
+    output s2,  DISPLAY_SEGMENT2
+    
+    input s2,  DISPLAY_SEGMENT0
+    output s2,  DISPLAY_SEGMENT1
+    
+    output s9, DISPLAY_SEGMENT0
+
+BUTTON_IRQ_HANDLER:
+    load sF, 00
+    load sE, 00
+    load s4, 00
+    
+    input sF, BUTTONS_SIGNAL
+    load sE, sF
+    
+    compare sF, 00
+    jump Z, IRQ_HANDLER_RETURN
+    
+
+    load s4, sF
+    output s4, BUTTONS_DEBOUNCE
+
+    load s0, 0F
+    output s0, BUTTONS_DEBOUNCE
+    
+IRQ_HANDLER_RETURN:     
+    RETURNI ENABLE
+    
+    address 3FF
+    jump IRQ_HANDLER    
+
+
