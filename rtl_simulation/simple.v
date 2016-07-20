@@ -37,8 +37,8 @@ module test_case ();
       @(posedge `WB_CLK);
       @(negedge `ADXL362_RESET);
 
-      @(posedge spi_testbench.ncs);
-      @(posedge spi_testbench.ncs);
+//      @(posedge spi_testbench.ncs);
+//      @(posedge spi_testbench.ncs);
       @(posedge spi_testbench.ncs);
       `TEST_COMPARE("TEMPERATURE",  16'h02A5, spi_testbench.dut.temperature);
       

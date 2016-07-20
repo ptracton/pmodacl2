@@ -49,10 +49,10 @@ module spi_testbench (/*AUTOARG*/ ) ;
       
 
    adxl362 adxl362(
-                   .SCLK(sck),
-                   .MOSI(mosi),
-                   .nCS(ncs),
-                   .MISO(miso),
+                   .SCLK(sck_o),
+                   .MOSI(mosi_o),
+                   .nCS(ncs_o),
+                   .MISO(miso_i),
                    .INT1(int1),
                    .INT2(int2)                         
                    );

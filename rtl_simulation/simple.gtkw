@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Sat Jul 16 04:06:29 2016
+[*] Tue Jul 19 03:52:00 2016
 [*]
 [dumpfile] "/home/ptracton/src/hardware/pmodacl2/rtl_simulation/simple.vcd"
-[dumpfile_mtime] "Sat Jul 16 04:06:07 2016"
-[dumpfile_size] 3296655
+[dumpfile_mtime] "Tue Jul 19 03:38:45 2016"
+[dumpfile_size] 757834
 [savefile] "/home/ptracton/src/hardware/pmodacl2/rtl_simulation/simple.gtkw"
 [timestart] 0
 [size] 1920 1056
 [pos] -1 -1
-*-15.923750 15 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-13.899648 100475 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] spi_testbench.
 [treeopen] spi_testbench.adxl362.
 [treeopen] spi_testbench.dut.
@@ -19,61 +19,97 @@
 [sst_vpaned_height] 312
 @200
 -DUT SPI
-@24
-spi_testbench.dut.spi_inst.bit_count[2:0]
-spi_testbench.dut.spi_inst.bit_count_previous[2:0]
 @28
-spi_testbench.dut.spi_inst.clk
-spi_testbench.dut.spi_inst.miso_i
-spi_testbench.dut.spi_inst.mosi_o
-spi_testbench.dut.spi_inst.ncs_o
-spi_testbench.dut.spi_inst.rst
-spi_testbench.dut.spi_inst.sclk_o
-spi_testbench.dut.spi_inst.spi_byte_begin
-spi_testbench.dut.spi_inst.spi_byte_done
-@24
-spi_testbench.dut.spi_inst.spi_running_bit_cout[7:0]
+spi_testbench.dut.spi.bcnt[2:0]
+spi_testbench.dut.spi.clear_spif
+spi_testbench.dut.spi.clear_wcol
+spi_testbench.dut.spi.clk_i
 @22
-spi_testbench.dut.spi_inst.spi_rx_data[7:0]
-spi_testbench.dut.spi_inst.spi_tx_data[7:0]
+spi_testbench.dut.spi.clkcnt[11:0]
+@28
+spi_testbench.dut.spi.cpha
+spi_testbench.dut.spi.cpol
+spi_testbench.dut.spi.dwom
+spi_testbench.dut.spi.ena
+@22
+spi_testbench.dut.spi.espr[3:0]
+@28
+spi_testbench.dut.spi.icnt[1:0]
+spi_testbench.dut.spi.inta_o
+spi_testbench.dut.spi.miso_i
+spi_testbench.dut.spi.mosi_o
+spi_testbench.dut.spi.mstr
+spi_testbench.dut.spi.nrst
+@22
+spi_testbench.dut.spi.rfdout[7:0]
+@28
+spi_testbench.dut.spi.rfempty
+spi_testbench.dut.spi.rffull
+spi_testbench.dut.spi.rfre
+spi_testbench.dut.spi.rfwe
+spi_testbench.dut.spi.sck_o
+@22
+spi_testbench.dut.spi.spcr[7:0]
+@28
+spi_testbench.dut.spi.spe
+@22
+spi_testbench.dut.spi.sper[7:0]
+@28
+spi_testbench.dut.spi.spie
+spi_testbench.dut.spi.spif
+spi_testbench.dut.spi.spr[1:0]
+spi_testbench.dut.spi.spre[1:0]
+@22
+spi_testbench.dut.spi.spsr[7:0]
+@28
+spi_testbench.dut.spi.state[1:0]
+spi_testbench.dut.spi.tcnt[1:0]
+spi_testbench.dut.spi.tirq
+@22
+spi_testbench.dut.spi.treg[7:0]
+@28
+spi_testbench.dut.spi.wcol
+@22
+spi_testbench.dut.spi.wfdin[7:0]
+spi_testbench.dut.spi.wfdout[7:0]
+@28
+spi_testbench.dut.spi.wfempty
+spi_testbench.dut.spi.wffull
+spi_testbench.dut.spi.wfov
+spi_testbench.dut.spi.wfre
+spi_testbench.dut.spi.wfwe
+spi_testbench.dut.spi.wr_spsr
 @200
 -SPI MASTER
+@28
+spi_testbench.dut.controller.clear_spif
+spi_testbench.dut.controller.clear_wcol
+spi_testbench.dut.controller.clk
 @22
-spi_testbench.dut.spi_master.address[7:0]
-@24
-spi_testbench.dut.spi_master.bit_count[2:0]
+spi_testbench.dut.controller.count[31:0]
 @28
-spi_testbench.dut.spi_master.clk
-spi_testbench.dut.spi_master.clk_enable
-spi_testbench.dut.spi_master.clk_enable_async
-@24
-spi_testbench.dut.spi_master.count[31:0]
-@28
-spi_testbench.dut.spi_master.count_done
-@24
-spi_testbench.dut.spi_master.delay_count[2:0]
-@28
-spi_testbench.dut.spi_master.first
-spi_testbench.dut.spi_master.ncs_o
+spi_testbench.dut.controller.count_done
+spi_testbench.dut.controller.inta_o
+spi_testbench.dut.controller.ncs_o
 @22
-spi_testbench.dut.spi_master.next_state[3:0]
+spi_testbench.dut.controller.next_state[3:0]
+spi_testbench.dut.controller.rfdout[7:0]
 @28
-spi_testbench.dut.spi_master.rst
-spi_testbench.dut.spi_master.spi_byte_begin
-spi_testbench.dut.spi_master.spi_byte_done
-@820
-spi_testbench.dut.spi_master.spi_controller_state_name[319:0]
+spi_testbench.dut.controller.rfre
+spi_testbench.dut.controller.rst
 @22
-spi_testbench.dut.spi_master.spi_rx_data[7:0]
-spi_testbench.dut.spi_master.spi_tx_data[7:0]
-@28
-spi_testbench.dut.spi_master.start
+spi_testbench.dut.controller.spcr[7:0]
+spi_testbench.dut.controller.sper[7:0]
+@821
+spi_testbench.dut.controller.spi_controller_state_name[319:0]
 @22
-spi_testbench.dut.spi_master.state[3:0]
+spi_testbench.dut.controller.spsr[7:0]
+spi_testbench.dut.controller.state[3:0]
+spi_testbench.dut.controller.temperature[15:0]
+spi_testbench.dut.controller.wfdin[7:0]
 @28
-spi_testbench.dut.spi_master.state_machine_active
-@23
-spi_testbench.dut.spi_master.temperature[15:0]
+spi_testbench.dut.controller.wfwe
+spi_testbench.dut.controller.wr_spsr
 @200
 -ADXL362 SPI
 @28
@@ -87,7 +123,6 @@ spi_testbench.adxl362.spi.clk_sys
 @24
 spi_testbench.adxl362.spi.bit_count[2:0]
 @22
-spi_testbench.dut.spi_inst.spi_running_bit_cout[7:0]
 spi_testbench.adxl362.spi.command[7:0]
 spi_testbench.adxl362.spi.address[5:0]
 spi_testbench.adxl362.spi.data_read[7:0]

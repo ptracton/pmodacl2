@@ -30,7 +30,6 @@
 
 ../rtl/fpga.v
 ../rtl/spi_controller.v
-../rtl/spi_fifo.v
 ../rtl/simple_spi_top_modified.v
 ../rtl/fifo4.v
 ../rtl/system_controller.v      
