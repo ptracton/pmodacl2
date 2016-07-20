@@ -10,7 +10,7 @@
 
 
 `timescale 1ns/1ns
-`include "includes.v"
+`include "simulation_includes.vh"
 
 module uart_tasks;
 
@@ -74,17 +74,17 @@ module uart_tasks;
       begin
         $display("Reading 0x%x @ %d", expected, $time);
       
-      if (!testbench.uart0_int)
-        @(posedge testbench.uart0_int);
+      if (!`testbench.uart0_int)
+        @(posedge `testbench.uart0_int);
       
-      `UART_MASTER0.wb_rd1(32'hFFFF0000,    4'h0, testbench.read_word);
-      $display("TASK: UART Read = %c @ %d", testbench.read_word, $time);
-      if (testbench.read_word != expected)
+      `UART_MASTER0.wb_rd1(32'hFFFF0000,    4'h0, `testbench.read_word);
+      $display("TASK: UART Read = %c @ %d", `testbench.read_word, $time);
+      if (`testbench.read_word != expected)
         begin
-           $display("FAIL: UART Read = 0x%h NOT 0x%h @ %d", testbench.read_word[7:0], expected, $time);
+           $display("FAIL: UART Read = 0x%h NOT 0x%h @ %d", `testbench.read_word[7:0], expected, $time);
            `TEST_FAILED <= 1;
         end
-         @(posedge testbench.clk);         
+         @(posedge `testbench.clk);         
       end      
    endtask // uart_read_char
 

@@ -1,0 +1,57 @@
+{
+    "project":"simulate_isim",
+    "installed tools": [
+        "xilinx",
+        "altera",
+        "icarus"
+    ],
+    "flow_steps": {
+	      "1" : "clean",
+        "2" : "make_clean",
+        "3" : "compile",
+        "4" : "move",
+        "5" : "parse",
+        "6" : "test_case",
+        "7" : "elaborate",
+        "8" : "xsimulation"
+    },
+    "flow" : {
+	      "clean" :{
+	          "executable" : "rm",
+	          "arguments" : "-rf xsim.dir xvlog* xelab.pb webtalk* xsim.dir/ xvlog.pb *.wdb"
+	      },
+        "make_clean":{
+            "executable" : "make",
+            "arguments" : " TARGET=$application clean"            
+        },
+        "compile" : {
+            "executable" : "make",
+            "arguments" : " TARGET=$application"
+        },
+        "move" : {
+            "executable" : "mv",
+            "arguments" : " $application.v boot_rom.v"
+        },         
+	      "parse" :{
+	          "executable" : "xvlog",
+            "arguments" : "-prj rtl_xsim.prj"
+	      },
+	      "test_case" :{
+	          "executable" : "xvlog",
+            "arguments" : " $simulation -i ../behavioral/adxl362/"
+	      },        
+	      "elaborate" :{
+	          "executable" : "xelab",
+            "arguments" : "-prj rtl_xsim.prj -debug all  --timescale 1ns/1ns -L unisims_ver -L unimacro_ver work.soc_testbench"
+	      },        
+	      "xsimulation" : {
+	          "executable": "xsim",
+	          "arguments" : " work.soc_testbench -tclbatch simulation.tcl"	
+	      },
+	      "run" : {
+	          "executable" : "./a.out",
+	          "arguments"  : " "
+	      }
+    },
+    "remove_files" : "hack.vh webtalk* work.testbench.wdb xsim* xvlog* xelab*"
+}

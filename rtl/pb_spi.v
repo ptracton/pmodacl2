@@ -54,6 +54,8 @@ module pb_spi (/*AUTOARG*/
    wire                 inta_o;                 // From spi of simple_spi_top_modified.v
    wire [7:0]           rfdout;                 // From spi of simple_spi_top_modified.v
    wire                 rfre;                   // From regs of spi_regs.v
+   wire [7:0]           spcr;                   // From regs of spi_regs.v
+   wire [7:0]           sper;                   // From regs of spi_regs.v
    wire [7:0]           spsr;                   // From spi of simple_spi_top_modified.v
    wire [7:0]           wfdin;                  // From regs of spi_regs.v
    wire                 wfwe;                   // From regs of spi_regs.v
@@ -69,6 +71,8 @@ module pb_spi (/*AUTOARG*/
                  .clear_spif            (clear_spif),
                  .clear_wcol            (clear_wcol),
                  .wfdin                 (wfdin[7:0]),
+                 .spcr                  (spcr[7:0]),
+                 .sper                  (sper[7:0]),
                  // Inputs
                  .clk                   (clk),
                  .reset                 (reset),

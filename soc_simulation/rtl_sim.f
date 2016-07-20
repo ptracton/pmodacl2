@@ -5,17 +5,41 @@
 +incdir+../testbench
 +incdir+../rtl_simulation
 +incdir+../rtl
-+incdir+../soc      
++incdir+../soc
++incdir+../soc/wb_master/
++incdir+../soc/tasks/
++incdir+../soc/wb_uart/
 +incdir+../behavioral/verilog_utils/
 +incdir+../behavioral/adxl362/
 
-
+$XILINX_VIVADO/data/verilog/src/unisim_retarget_comp.v
+      
 ../testbench/soc_testbench.v
 ../testbench/test_tasks.v
 ../testbench/spi_tasks.v      
 ../testbench/dump.v
+../soc/tasks/uart_tasks.v
+
+//
+// Simulation Tools
+//
+../soc/wb_master/wb_mast_model.v
+../soc/wb_uart/raminfr.v
+../soc/wb_uart/uart_debug_if.v
+../soc/wb_uart/uart_defines.v
+../soc/wb_uart/uart_receiver.v
+../soc/wb_uart/uart_regs.v
+../soc/wb_uart/uart_rfifo.v
+../soc/wb_uart/uart_sync_flops.v
+../soc/wb_uart/uart_tfifo.v
+../soc/wb_uart/uart_top.v
+../soc/wb_uart/uart_transmitter.v
+../soc/wb_uart/uart_wb.v
 
 
+//
+// ADXL362 Accelerometer
+//
 ../behavioral/adxl362/adxl362.v
 ../behavioral/adxl362/adxl362_system_controller.v
 ../behavioral/adxl362/adxl362_spi.v
@@ -28,7 +52,8 @@
 //
 ../rtl/simple_spi_top_modified.v
 ../rtl/fifo4.v
-
+../rtl/pb_spi.v
+../rtl/spi_regs.v
 
 //
 // Display
@@ -52,6 +77,7 @@
 
 ../soc/picoblaze/cpu.v
 ../soc/picoblaze/kcpsm6.v
+boot_rom.v
 
 //
 // System Controller
@@ -67,3 +93,9 @@
 ../soc/uart_pb/uart_rx6.v
 ../soc/uart_pb/uart_tx6.v
 ../soc/uart_pb/uart.v
+
+
+//
+// FPGA SoC Top
+//
+../soc/soc.v

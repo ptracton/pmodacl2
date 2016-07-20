@@ -62,6 +62,14 @@ if __name__ == "__main__":
                         help="Which simulation test case to run",
                         required=True,
                         action="store")
+    parser.add_argument("--application",
+                        help="Which code to run in this test",
+                        required=True,
+                        action="store")    
+    parser.add_argument("--soc",
+                        help="Run the SoC design",
+                        required=True,
+                        action="store_true")    
 
     args = parser.parse_args()
     if args.debug:
@@ -69,11 +77,20 @@ if __name__ == "__main__":
         print(args)
 
     if args.icarus:
-        json_file = "../configurations/simulate_iverilog.json"
+        if args.soc:
+            json_file = "../configurations/simulate_iverilog_soc.json"
+        else:
+            json_file = "../configurations/simulate_iverilog.json"
     if args.ncverilog:
-        json_file = "../configurations/simulate_ncverilog.json"
+        if args.soc:
+            json_file = "../configurations/simulate_ncverilog_soc.json"
+        else:
+            json_file = "../configurations/simulate_ncverilog.json"
     if args.xsim:
-        json_file = "../configurations/simulate_xsim.json"
+        if args.soc:
+            json_file = "../configurations/simulate_xsim_soc.json"
+        else:
+            json_file = "../configurations/simulate_xsim.json"
 
     try:
         f = open(json_file, "r")
@@ -91,7 +108,7 @@ if __name__ == "__main__":
         executable = json_data['flow'][flow_steps[step]]['executable']
         arguments = string.Template(
             json_data['flow'][flow_steps[step]]['arguments'])
-        arguments_str = arguments.safe_substitute(simulation=args.simulation)
+        arguments_str = arguments.safe_substitute(simulation=args.simulation,application=args.application)
         if args.debug:
             print(executable)
         if (arguments is None):

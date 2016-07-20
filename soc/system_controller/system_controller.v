@@ -24,27 +24,29 @@ module system_controller(/*AUTOARG*/
    // Inputs
    clk_in, reset_in
    );
-   input clk_in;
-   output clk_sys;
-   input  reset_in;
-   output reset_sys;   
-   output locked;
+   input wire clk_in;
+   output wire clk_sys;
+   input  wire reset_in;
+   output wire reset_sys;   
+   output wire locked;
    
     
    //
    // Input buffer to make sure the XCLK signal is routed
    // onto the low skew clock lines
    //
+
+`ifdef XILINX
    wire                         xclk_buf;
    IBUFG xclk_ibufg(.I(clk_in), .O(xclk_buf));
-   
-   
    wire                         locked;
-
-   assign reset_sys = reset_in | ~locked | |reset_count;   
+`endif
    
+
    reg [5:0]                    reset_count = 6'h0;
-   always @(posedge xclk_buf)
+   assign reset_sys = reset_in | ~locked | (|reset_count);   
+   
+   always @(posedge clk_in)
      if (reset_in | ~locked) begin
         reset_count <= 6'h1;        
      end else begin
@@ -57,6 +59,7 @@ module system_controller(/*AUTOARG*/
    // Clock buffer that ensures the clock going out to the hardware is on a low skew line
    //
 
+`ifdef XILINX   
    BUFG clk_bug (
                  .O(clk_sys), // 1-bit output Clock buffer output
                  .I(CLKFBOUT) // 1-bit input Clock buffer input (S=0)
@@ -71,6 +74,12 @@ module system_controller(/*AUTOARG*/
       // Status and control signals
       .reset(reset_in), // input reset
       .locked(locked));      // output locked
+`else // !`ifdef XILINX
+
+   assign clk_sys = clk_in;   
+   
+`endif //  `ifdef XILINX
+   
    
 endmodule // system_controller
 

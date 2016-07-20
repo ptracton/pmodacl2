@@ -52,7 +52,10 @@ module soc (/*AUTOARG*/
    wire         reset_sys;              // From sys_con of system_controller.v
    wire         write_strobe;           // From picoblaze_cpu of cpu.v
    wire [7:0]   in_port;
-   
+
+   //
+   // Peripheral's Data Bus
+   //
    wire [7:0]   sw0_out_port;
    wire [7:0]   sw1_out_port;
    wire [7:0]   led0_out_port;
@@ -61,7 +64,13 @@ module soc (/*AUTOARG*/
    wire [7:0]   display_data_out;
    wire [7:0]   buttons_out_port;
    wire [7:0]   spi_out_port;
+
+   //
+   // Interrupts
+   // 
    wire         spi_interrupt;
+   wire         uart_interrupt;
+   wire         button_interrupt;
    
    //
    // Clock and Reset System Controller

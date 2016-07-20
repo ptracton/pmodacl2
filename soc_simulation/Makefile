@@ -1,0 +1,16 @@
+CC = opbasm
+CC_FLAGS = -t ROM_form.v -6
+TARGET = none
+TARGET_BASE = $(basename $(TARGET))
+VERILOG_OUTPUT = $(TARGET_BASE).v
+MEMORY_OUTPUT = $(TARGET_BASE).mem
+FORMAT_OUTPUT = $(TARGET_BASE).fmt
+LOG_OUTPUT  = $(TARGET_BASE).log
+
+all: $(VERILOG_OUTPUT)
+
+%.v: %.psm
+	$(CC) -i $< $(CC_FLAGS)
+
+clean:
+	rm -rf *~ $(VERILOG_OUTPUT) $(MEMORY_OUTPUT) $(FORMAT_OUTPUT) $(LOG_OUTPUT)

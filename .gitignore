@@ -51,3 +51,5 @@ INCA_libs/
 *.wdb
 *.pb
 xsim.dir/
+*.fmt
+*.mem

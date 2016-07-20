@@ -66,8 +66,8 @@ module pb_uart_regs (/*AUTOARG*/
    // Registers
    //
    reg [7:0]              uart_control         = 8'h00;
-   reg [2:0]              uart_irq_mask        = 3'h00;
-   reg [2:0]              uart_irq             = 3'h00; 
+   reg [2:0]              uart_irq_mask        = 3'h0;
+   reg [2:0]              uart_irq             = 3'h0; 
    reg [15:0]             uart_clock_divide    = 16'h0000;
    reg                    buffer_read          = 1'b0;
    reg                    buffer_write         = 1'b0;

@@ -1,5 +1,5 @@
-`include <timescale.v>
-`include "includes.v"
+
+`include "simulation_includes.vh"
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -22,7 +22,7 @@
 
 
 module soc_testbench;
-`include <test_management.v>   
+`include "test_management.v"
 
    reg [31:0] read_word;
 
@@ -43,6 +43,9 @@ module soc_testbench;
    wire        ncs_o;
    wire        mosi_o;
    wire        miso_i;
+
+   wire wb_clk = clk;
+   wire wb_rst = reset;
    
    soc dut(
            // Outputs
@@ -142,7 +145,29 @@ module soc_testbench;
                    .INT2(int2)                         
                    );
    
+   /****************************************************************************
+    
+    TEST SUPPORT
+    
+    ***************************************************************************/
 
+   //
+   // Tasks used to interface with ADXL362
+   //
+   spi_tasks spi_tasks();
+     
+   
+   //
+   // Tasks used to help test cases
+   //
+   test_tasks test_tasks();
+   
+   //
+   // The actual test cases that are being tested
+   //
+   test_case test_case();   
+   
+/* -----\/----- EXCLUDED -----\/-----
    
    reg         uart_passed = 0;
    reg         leds_passed = 0;
@@ -263,6 +288,7 @@ module soc_testbench;
       #10000000;
       test_failed <= 1'b1;      
    end   
+ -----/\----- EXCLUDED -----/\----- */
 
 /* -----\/----- EXCLUDED -----\/-----
    initial begin

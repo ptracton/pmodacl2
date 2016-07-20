@@ -10,7 +10,8 @@
 
 module spi_regs (/*AUTOARG*/
    // Outputs
-   data_out, wfwe, rfre, wr_spsr, clear_spif, clear_wcol, wfdin,
+   data_out, wfwe, rfre, wr_spsr, clear_spif, clear_wcol, wfdin, spcr,
+   sper,
    // Inputs
    clk, reset, port_id, data_in, read_strobe, write_strobe, rfdout
    ) ;
@@ -41,5 +42,11 @@ module spi_regs (/*AUTOARG*/
    output wire            clear_spif; //Clear the SPIF bit
    output wire            clear_wcol; //Clear the WCOL bit
    output wire [7:0]      wfdin;  // Write FIFO Data In
+
+   //
+   // Registers
+   //
+   output reg [7:0]       spcr;
+   output reg [7:0]       sper;
    
 endmodule // spi_regs

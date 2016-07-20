@@ -1,0 +1,43 @@
+{
+    "project":"simulate_iverilog",
+    "installed tools": [
+        "xilinx",
+        "altera",
+        "icarus"
+    ],
+    "flow_steps": {
+        "1" : "clean_up",
+        "2" : "make_clean",
+        "3" : "compile",
+        "4": "move",
+        "4" : "simulation",
+        "5" : "run"
+    },
+    "flow" : {
+        "clean_up" : {
+            "executable" : "rm",
+            "arguments" : "-f dump.vcd a.out hack.vh"
+        },
+        "make_clean":{
+            "executable" : "make",
+            "arguments" : " TARGET=$application clean"            
+        },
+        "compile" : {
+            "executable" : "make",
+            "arguments" : " TARGET=$application"
+        },
+        "move" : {
+            "executable" : "mv",
+            "arguments" : " $application.v boot_rom.v"
+        },        
+	      "simulation" : {
+	          "executable": "iverilog",
+	          "arguments" : " -f rtl_sim.f $simulation +define+ICARUS "	
+	      },
+	      "run" : {
+	          "executable" : "vvp",
+	          "arguments"  : "-l $simulation.log a.out"
+	      }
+    },
+    "remove_files": "hack.vh *.vcd a.out *.log"
+}
