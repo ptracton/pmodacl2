@@ -332,10 +332,73 @@ SPI_WRITE_WAIT_DATA:
   output s0, SPI_NCS  
 
   return
+
+
+ADXL362_SPI_READ:
+
+  load s0,0
+  output s0, SPI_NCS            ;Lower NCS
   
+  load S0, ADXL362_COMMAND_READ
+  output S0, SPI_DATA           ;Do a read 
+
+  fetch S6, 80
+  output S6, SPI_DATA           ;To this register
+
+  load s0, 00
+  output S0, SPI_DATA           ; Send 00 to read back a value
+  
+  load s9, 81
+SPI_READ_WAIT_COMMAND: 
+  input S2, SPI_STATUS
+  test s2, 80                   ;Test SPIF
+  jump Z, SPI_READ_WAIT_COMMAND
+
+  load S0, 80
+  output S0, SPI_STATUS                 ;Clear SPIF
+  input s0, SPI_DATA                    ;read FIFO
+  
+  load s9, 82
+SPI_READ_WAIT_ADDRESS: 
+  input S2, SPI_STATUS
+  test s2, 80                   ;Test SPIF
+  jump Z, SPI_READ_WAIT_ADDRESS
+
+  load S0, 80
+  output S0, SPI_STATUS                 ;Clear SPIF
+  input s0, SPI_DATA                    ;read FIFO
+  
+  load s9, 83
+SPI_READ_WAIT_DATA: 
+  input S2, SPI_STATUS
+  test s2, 80                   ;Test SPIF
+  jump Z, SPI_READ_WAIT_DATA
+
+  load S0, 80
+  output S0, SPI_STATUS                 ;Clear SPIF
+  input s0, SPI_DATA                    ;read FIFO
+  store s0, 00
+ 
+  load s0,1                     ;Raise NCS
+  output s0, SPI_NCS  
+
+  return  
 
   
 ADXL362_INIT:
+
+  load sC, ADXL362_DEVID_AD
+  store sC, 00
+  call ADXL362_SPI_READ
+
+  fetch s0, 00
+  compare s0, AD
+  jump Z, ADXL362_FINISH_INIT
+
+ADXL362_FAIL:
+  jump ADXL362_FAIL
+
+ADXL362_FINISH_INIT:  
   load SC, ADXL362_FIFO_CONTROL ;This register
   store SC, 00
   load SD, 06                   ;This Data

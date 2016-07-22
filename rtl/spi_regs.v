@@ -134,8 +134,9 @@ module spi_regs (/*AUTOARG*/
         end
         if (spdr_enable) begin
            data_out <= rfdout;
-           rfre <= 0;           
+           rfre <= 1;           
         end else begin
+           rfre <= 0;           
         end
      end
    

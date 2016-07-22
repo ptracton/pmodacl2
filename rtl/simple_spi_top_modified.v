@@ -107,7 +107,7 @@ module simple_spi_top_modified(
   // Module body
   //
  
-  reg  [7:0] treg, rreg; // Transmit/Receive register
+  reg  [7:0] treg; // Transmit/Receive register
 
   // fifo signals
 //  wire [7:0] rfdout;
