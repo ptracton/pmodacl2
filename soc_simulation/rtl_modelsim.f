@@ -67,11 +67,21 @@ vlog ../soc/uart_pb/uart.v
 
 
 vlog ../soc/soc.v
+vlog ../soc/xilinx_wrappers.v      
 #vlog $XILINX_VIVADO/data/verilog/src/glbl.v
-vlog /opt/Xilinx/Vivado/2015.2/data/verilog/src/glbl.v
-vlog /opt/Xilinx/Vivado/2015.2/data/verilog/src/unisim_retarget_comp.v
-
-
+#vlog /opt/Xilinx/Vivado/2015.2/data/verilog/src/glbl.v
+#vlog /opt/Xilinx/Vivado/2015.2/data/verilog/src/unisim_retarget_comp.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/glbl.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6_2.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/MUXCY.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/XORCY.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM32M.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/FDRE.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/SRL16E.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAMB18E1.v
+vlog /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM64M.v
+      
 vlog test_case.v  +incdir+../behavioral/adxl362/ +incdir+../testbench/
 
 vsim -voptargs=+acc work.soc_testbench +define+XILINX   

@@ -33,7 +33,7 @@ verilog work ../soc/wb_uart/uart_wb.v -i ../testbench/
 // ADXL362 Accelerometer
 //
 verilog work ../behavioral/adxl362/adxl362.v
-verilog work ../behavioral/adxl362/adxl362_system_controller.v
+verilog work ../behavioral/adxl362/adxl362_system_controller.v -i ../testbench/
 verilog work ../behavioral/adxl362/adxl362_spi.v
 verilog work ../behavioral/adxl362/adxl362_regs.v -i ../behavioral/adxl362/         
 verilog work ../behavioral/adxl362/adxl362_fifo.v
@@ -74,7 +74,7 @@ verilog work boot_rom.v -i ../testbench/
 //
 // System Controller
 //
-verilog work ../soc/system_controller/system_controller.v
+verilog work ../soc/system_controller/system_controller.v -i ../testbench/
 
 //
 // UART
@@ -91,4 +91,4 @@ verilog work ../soc/uart_pb/uart.v
 // FPGA SoC Top
 //
 verilog work ../soc/soc.v
-
+verilog work ../soc/xilinx_wrappers.v

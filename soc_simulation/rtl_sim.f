@@ -15,18 +15,28 @@
 +incdir+$XILINX_VIVADO/data/verilog/src/
 +incdir+$XILINX_VIVADO/data/verilog/src/unisims/
 
-$XILINX_VIVADO/data/verilog/src/glbl.v
-//$XILINX_VIVADO/data/verilog/src/unisim_comp.v
-//-y $XILINX_VIVADO/data/verilog/src/retarget/
-$XILINX_VIVADO/data/verilog/src/unisims/LUT6_2.v
-$XILINX_VIVADO/data/verilog/src/unisims/LUT6.v
-$XILINX_VIVADO/data/verilog/src/unisims/MUXCY.v
-$XILINX_VIVADO/data/verilog/src/unisims/XORCY.v
-$XILINX_VIVADO/data/verilog/src/unisims/RAM32M.v
-$XILINX_VIVADO/data/verilog/src/unisims/FDRE.v
-$XILINX_VIVADO/data/verilog/src/unisims/SRL16E.v
-$XILINX_VIVADO/data/verilog/src/unisims/RAMB18E1.v
-$XILINX_VIVADO/data/verilog/src/unisims/RAM64M.v
+//$XILINX_VIVADO/data/verilog/src/glbl.v
+//$XILINX_VIVADO/data/verilog/src/unisims/LUT6_2.v
+//$XILINX_VIVADO/data/verilog/src/unisims/LUT6.v
+//$XILINX_VIVADO/data/verilog/src/unisims/MUXCY.v
+//$XILINX_VIVADO/data/verilog/src/unisims/XORCY.v
+//$XILINX_VIVADO/data/verilog/src/unisims/RAM32M.v
+//$XILINX_VIVADO/data/verilog/src/unisims/FDRE.v
+//$XILINX_VIVADO/data/verilog/src/unisims/SRL16E.v
+//$XILINX_VIVADO/data/verilog/src/unisims/RAMB18E1.v
+//$XILINX_VIVADO/data/verilog/src/unisims/RAM64M.v
+
+
+/cadtools/apps/Vivado/2015.1/data/verilog/src/glbl.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6_2.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/MUXCY.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/XORCY.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM32M.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/FDRE.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/SRL16E.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAMB18E1.v
+/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM64M.v
       
 ../testbench/soc_testbench.v
 ../testbench/test_tasks.v

@@ -56,8 +56,54 @@
     constant BUTTONS_IRQ,      64  
     constant BUTTONS_DEBOUNCE, 65
     constant BUTTONS_SIGNAL,   66
-        
+
+    constant SPI_CONTROL,      70
+    constant SPI_STATUS,       71
+    constant SPI_DATA,         72
+    constant SPI_EXTENSION,    73
+    constant SPI_NCS,          74
+
+	  constant ADXL362_DEVID_AD          ,00
+	  constant ADXL362_DEVID_MST         ,01
+	  constant ADXL362_PARTID            ,02
+	  constant ADXL362_REVID             ,03
+	  constant ADXL362_XDATA             ,08
+	  constant ADXL362_YDATA             ,09
+	  constant ADXL362_ZDATA             ,0A
+	  constant ADXL362_STATUS            ,0B
+	  constant ADXL362_FIFO_ENTRIES_LOW  ,0C
+	  constant ADXL362_FIFO_ENTRIES_HIGH ,0D
+	  constant ADXL362_XDATA_LOW         ,0E
+	  constant ADXL362_XDATA_HIGH        ,0F
+	  constant ADXL362_YDATA_LOW         ,10
+	  constant ADXL362_YDATA_HIGH        ,11
+	  constant ADXL362_ZDATA_LOW         ,12
+	  constant ADXL362_ZDATA_HIGH        ,13
+	  constant ADXL362_TEMP_LOW          ,14
+	  constant ADXL362_TEMP_HIGH         ,15
+	  constant ADXL362_SOFT_RESET        ,1F
+	  constant ADXL362_THRESH_ACT_LOW    ,20
+	  constant ADXL362_THRESH_ACT_HIGH   ,21
+	  constant ADXL362_TIME_ACT          ,22
+	  constant ADXL362_THRESH_INACT_LOW  ,23
+	  constant ADXL362_THRESH_INACT_HIGH ,24
+	  constant ADXL362_TIME_INACT_LOW    ,25
+	  constant ADXL362_TIME_INACT_HIGH   ,26
+	  constant ADXL362_ACT_INACT_CTL     ,27
+	  constant ADXL362_FIFO_CONTROL      ,28
+	  constant ADXL362_FIFO_SAMPLES      ,29
+	  constant ADXL362_INTMAP1           ,2A
+	  constant ADXL362_INTMAP2           ,2B
+	  constant ADXL362_FILTER_CTL        ,2C
+	  constant ADXL362_POWER_CTL         ,2D
+	  constant ADXL362_SELF_TEST         ,2E
+
+	  constant ADXL362_COMMAND_WRITE     ,0A
+	  constant ADXL362_COMMAND_READ      ,0B
+	  constant ADXL362_COMMAND_FIFO      ,0D
+  
 start:
+
 
     load sD, 20
     store sD, 00    
@@ -82,7 +128,11 @@ start:
     call UART_INIT
 
     call DISPLAY_INIT
+
+  call SPI_INIT
+  call ADXL362_INIT
     
+  
     ;;
     ;; Allow interrupts to be processed
     ;; 
@@ -222,7 +272,79 @@ DISPLAY_INIT:
     output S0,00
 
     return
-    
+
+SPI_INIT:
+  load S0, C0
+  output S0, SPI_STATUS                 ;Clear SPIF and WCOL
+
+  load S0, D2
+  output S0, SPI_CONTROL                   ;Enable SPI, enable interrupt, Master mode, SPR=2
+
+  load S0, 01
+  output S0, SPI_EXTENSION                   ;extension and SPR are combined to calculate sck_o frequency
+  
+  return
+
+
+ADXL362_SPI_WRITE:
+
+  load s0,0
+  output s0, SPI_NCS            ;Lower NCS
+  
+  load S0, ADXL362_COMMAND_WRITE
+  output S0, SPI_DATA           ;Do a write
+
+  fetch S6, 00
+  output S6, SPI_DATA           ;To this register
+  
+  fetch S7, 01                  ; With this data
+  output S7, SPI_DATA
+  
+  load s9, 01
+SPI_WRITE_WAIT_COMMAND: 
+  input S2, SPI_STATUS
+  test s2, 80                   ;Test SPIF
+  jump Z, SPI_WRITE_WAIT_COMMAND
+
+  load S0, 80
+  output S0, SPI_STATUS                 ;Clear SPIF
+  
+  load s9, 02
+SPI_WRITE_WAIT_ADDRESS: 
+  input S2, SPI_STATUS
+  test s2, 80                   ;Test SPIF
+  jump Z, SPI_WRITE_WAIT_ADDRESS
+
+  load S0, 80
+  output S0, SPI_STATUS                 ;Clear SPIF
+
+  load s9, 03
+SPI_WRITE_WAIT_DATA: 
+  input S2, SPI_STATUS
+  test s2, 80                   ;Test SPIF
+  jump Z, SPI_WRITE_WAIT_DATA
+
+  load S0, 80
+  output S0, SPI_STATUS                 ;Clear SPIF
+  
+ 
+  load s0,1                     ;Raise NCS
+  output s0, SPI_NCS  
+
+  return
+  
+
+  
+ADXL362_INIT:
+  load SC, ADXL362_FIFO_CONTROL ;This register
+  store SC, 00
+  load SD, 06                   ;This Data
+  store SD, 01
+  call ADXL362_SPI_WRITE
+  
+  return
+
+  
 IRQ_HANDLER:
     input s1, UART_STATUS
     test s1, 01

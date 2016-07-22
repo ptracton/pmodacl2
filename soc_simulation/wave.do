@@ -201,8 +201,69 @@ add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/
 add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/dut/uart/receiver/sample_input
 add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/dut/uart/receiver/buffer_write_value
 add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/dut/uart/receiver/buffer_write
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/MISO
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/MOSI
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/SCLK
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_DONE
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_IDLE
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_WRITE
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/address
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/bit_count
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/bit_count_previous
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/clk_sys
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/command
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_fifo_read
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_fifo_write
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_rd
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_read
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_write
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/empty_fifo
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/finish
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/first
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/flush
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/flush_fifo
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/full_fifo
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/nCS
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/next_state
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/read_data_fifo
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/read_fifo
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/rst
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/running_bit_count
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_byte_begin
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_byte_done
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_data_in
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_data_out
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/state
+add wave -noupdate -expand -group {ADXL362 SPI} -radix ascii /soc_testbench/adxl362/spi/state_name
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/terminate_transaction
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/wr_next_state
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/wr_state
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/write
+add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/write_fifo
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/act_inact_ctrl
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/address
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/clk_sys
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/data_read
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/data_write
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/fifo_ctrl
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/fifo_samples
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/filter_ctrl
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/intmap1
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/intmap2
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/power_ctrl
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/self_test
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/status
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/temperature
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/threshold_active
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/threshold_inactive
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/time_active
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/time_inactive
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/write
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/xdata
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/ydata
+add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/zdata
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {5200 ps} 0}
+WaveRestoreCursors {{Cursor 1} {33265000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 467
 configure wave -valuecolwidth 100
@@ -218,4 +279,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {1707958 ps} {1736424 ps}
+WaveRestoreZoom {0 ps} {107496289 ps}

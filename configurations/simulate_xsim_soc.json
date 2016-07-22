@@ -38,7 +38,7 @@
 	      },
 	      "test_case" :{
 	          "executable" : "xvlog",
-            "arguments" : " $simulation -i ../behavioral/adxl362/ --log vlog_test_case_$simulation.log"
+            "arguments" : " $simulation -i ../testbench/ -i ../behavioral/adxl362/ --log vlog_test_case_$simulation.log"
 	      },        
 	      "elaborate" :{
 	          "executable" : "xelab",

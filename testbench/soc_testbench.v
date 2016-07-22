@@ -138,10 +138,10 @@ module soc_testbench;
     
     ***************************************************************************/
    adxl362 adxl362(
-                   .SCLK(sck),
-                   .MOSI(mosi),
-                   .nCS(ncs),
-                   .MISO(miso),
+                   .SCLK(sck_o),
+                   .MOSI(mosi_o),
+                   .nCS(ncs_o),
+                   .MISO(miso_i),
                    .INT1(int1),
                    .INT2(int2)                         
                    );
@@ -169,6 +169,16 @@ module soc_testbench;
    // The actual test cases that are being tested
    //
    test_case test_case();   
+
+
+   initial begin
+      @(posedge reset);
+      @(negedge reset);
+
+      #100;
+      `UART_CONFIG;
+
+   end // initial begin
    
 /* -----\/----- EXCLUDED -----\/-----
    

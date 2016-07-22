@@ -54,3 +54,6 @@ xsim.dir/
 *.fmt
 *.mem
 *.gtkw
+*.wlf
+work/
+transcript

@@ -59,26 +59,28 @@ module pb_spi (/*AUTOARG*/
    wire                 wr_spsr;                // From regs of spi_regs.v
    // End of automatics
 
-   spi_regs regs(/*AUTOINST*/
-                 // Outputs
-                 .data_out              (data_out[7:0]),
-                 .wfwe                  (wfwe),
-                 .rfre                  (rfre),
-                 .wr_spsr               (wr_spsr),
-                 .clear_spif            (clear_spif),
-                 .clear_wcol            (clear_wcol),
-                 .wfdin                 (wfdin[7:0]),
-                 .spcr                  (spcr[7:0]),
-                 .sper                  (sper[7:0]),
-                 // Inputs
-                 .spsr                  (spsr[7:0]),
-                 .clk                   (clk),
-                 .reset                 (reset),
-                 .port_id               (port_id[7:0]),
-                 .data_in               (data_in[7:0]),
-                 .read_strobe           (read_strobe),
-                 .write_strobe          (write_strobe),
-                 .rfdout                (rfdout[7:0]));
+   spi_regs  #(.BASE_ADDRESS(BASE_ADDRESS))
+   regs(/*AUTOINST*/
+        // Outputs
+        .data_out                       (data_out[7:0]),
+        .wfwe                           (wfwe),
+        .rfre                           (rfre),
+        .wr_spsr                        (wr_spsr),
+        .clear_spif                     (clear_spif),
+        .clear_wcol                     (clear_wcol),
+        .wfdin                          (wfdin[7:0]),
+        .ncs_o                          (ncs_o),
+        .spcr                           (spcr[7:0]),
+        .sper                           (sper[7:0]),
+        // Inputs
+        .clk                            (clk),
+        .reset                          (reset),
+        .port_id                        (port_id[7:0]),
+        .data_in                        (data_in[7:0]),
+        .read_strobe                    (read_strobe),
+        .write_strobe                   (write_strobe),
+        .rfdout                         (rfdout[7:0]),
+        .spsr                           (spsr[7:0]));
    
    
    simple_spi_top_modified spi(
