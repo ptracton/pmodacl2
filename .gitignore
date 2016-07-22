@@ -53,3 +53,4 @@ INCA_libs/
 xsim.dir/
 *.fmt
 *.mem
+*.gtkw

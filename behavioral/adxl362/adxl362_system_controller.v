@@ -7,7 +7,7 @@
 // Last Modified On: Thu Jun 23 20:54:55 2016
 // Update Count    : 0
 // Status          : Unknown, Use with caution!
-
+`include "timescale.v"
 module adxl362_system_controller (/*AUTOARG*/
    // Outputs
    clk, clk_sys, reset, clk_odr, rst,

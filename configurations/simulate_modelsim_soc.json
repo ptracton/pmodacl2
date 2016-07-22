@@ -1,0 +1,23 @@
+{
+    "project":"simulate_modelsim",
+ 
+    "flow_steps": {
+        "1": "test_case",
+	    "2" : "simulation"
+    },
+    "flow" : {
+	    "test_case" : {
+	        "executable": "cp",
+	        "arguments" : " -f $simulation test_case.v"	
+	    },        
+	    "simulation" : {
+	        "executable": "vsim",
+	        "arguments" : " -c -do rtl_modelsim.f -l $simulation.modelsim.log"	
+	    },
+	    "run" : {
+	        "executable" : "./a.out",
+	        "arguments"  : " "
+	    }
+    },
+    "remove_files" : "work transcript test_case.v"
+}

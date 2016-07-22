@@ -58,6 +58,9 @@ if __name__ == "__main__":
     parser.add_argument("--xsim",
                         help="Use Xilinx Vivado XSim",
                         action="store_true")
+    parser.add_argument("--modelsim",
+                        help="Use Altera Modelsim",
+                        action="store_true")    
     parser.add_argument("--simulation",
                         help="Which simulation test case to run",
                         required=True,
@@ -91,7 +94,12 @@ if __name__ == "__main__":
             json_file = "../configurations/simulate_xsim_soc.json"
         else:
             json_file = "../configurations/simulate_xsim.json"
-
+    if args.modelsim:
+        if args.soc:
+            json_file = "../configurations/simulate_modelsim_soc.json"
+        else:
+            json_file = "../configurations/simulate_modelsim.json"
+        
     try:
         f = open(json_file, "r")
         json_data = json.load(f)

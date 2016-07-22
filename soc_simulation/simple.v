@@ -8,6 +8,7 @@
 // Update Count    : 0
 // Status          : Unknown, Use with caution!
 
+`include "timescale.v"
 `include "simulation_includes.vh"
 
 module test_case ();
