@@ -150,7 +150,9 @@ module soc_testbench;
     TEST SUPPORT
     
     ***************************************************************************/
+   glbl glbl();
 
+   
    //
    // Tasks used to interface with ADXL362
    //

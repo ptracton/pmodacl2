@@ -2,8 +2,8 @@ verilog work ../testbench/soc_testbench.v  -i ../behavioral/adxl362/
 verilog work ../testbench/test_tasks.v -i ../behavioral/adxl362/
 verilog work ../testbench/dump.v -i ../behavioral/adxl362/
    
-
-verilog work $XILINX_VIVADO/data/verilog/src/unisim_retarget_comp.v
+--sourcelibdir $XILINX_VIVADO/data/verilog/src/unisims/
+//verilog work $XILINX_VIVADO/data/verilog/src/unisim_retarget_comp.v
 verilog work $XILINX_VIVADO/data/verilog/src/glbl.v
 
 verilog work ../testbench/soc_testbench.v -i ../behavioral/adxl362/ 

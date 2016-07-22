@@ -10,7 +10,7 @@
         "2" : "make_clean",
         "3" : "compile",
         "4" : "move",
-        "5" : "parse",
+        
         "6" : "test_case",
         "7" : "elaborate",
         "8" : "xsimulation"
@@ -34,11 +34,11 @@
         },         
 	      "parse" :{
 	          "executable" : "xvlog",
-            "arguments" : "-prj rtl_xsim.prj"
+            "arguments" : "-prj rtl_xsim.prj --log xvlog_$simulation.log"
 	      },
 	      "test_case" :{
 	          "executable" : "xvlog",
-            "arguments" : " $simulation -i ../behavioral/adxl362/"
+            "arguments" : " $simulation -i ../behavioral/adxl362/ --log vlog_test_case_$simulation.log"
 	      },        
 	      "elaborate" :{
 	          "executable" : "xelab",
