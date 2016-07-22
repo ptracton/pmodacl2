@@ -15,6 +15,12 @@
 `define WB_RST      `TB.wb_rst
 `define WB_CLK      `TB.wb_clk
 
+`define DUT `TB.dut
+`define CPU `DUT.picoblaze
+`define PROCESSOR `CPU.processor
+`define PROGRAM_ROM `CPU.program_rom
+
+
 `define ADXL362     `TB.adxl362
 `define ADXL362_ACCELEROMETER `ADXL362.accelerometer
 `define ADXL362_SPI_FIFO `ADXL362.spi.fifo

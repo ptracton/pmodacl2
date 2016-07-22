@@ -22,7 +22,11 @@ module dump;
 `ifdef NCVERILOG
         //$shm_open("test.shm",0);
         $shm_open({test_name,".shm"}, 0);
-        $shm_probe(`TB,"MAC");        
+        $shm_probe(`TB,"MAC");  
+ `ifdef SOC
+        $shm_probe(`PROGRAM_ROM, "MAC");
+        
+ `endif      
 `else	
 	    $dumpfile({test_name,".vcd"});
 	    $dumpvars(0, `TB);

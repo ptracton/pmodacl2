@@ -85,12 +85,11 @@ module cpu (/*AUTOARG*/
    // used to 'OR' your signal with 'rdl' from the program memory.
    // 
    
-   boot_rom
-   program_rom (    		       	//Name to match your PSM file
-	                                .enable 		(bram_enable),
-	                                .address 		(address),
-	                                .instruction 	(instruction),
-	                                .clk 			(clk_sys));
+   boot_rom program_rom (    		       	//Name to match your PSM file
+	                                      .enable 		(bram_enable),
+	                                      .address 		(address),
+	                                      .instruction 	(instruction),
+	                                      .clk 			(clk_sys));
    
   assign kcpsm6_reset = reset_sys;
 

@@ -1,3 +1,4 @@
++libext+.v
 +define+VERBOSE
 +define+SIM
 +define+RTL_SIM
@@ -11,8 +12,21 @@
 +incdir+../soc/wb_uart/
 +incdir+../behavioral/verilog_utils/
 +incdir+../behavioral/adxl362/
++incdir+$XILINX_VIVADO/data/verilog/src/
++incdir+$XILINX_VIVADO/data/verilog/src/unisims/
 
-$XILINX_VIVADO/data/verilog/src/unisim_retarget_comp.v
+$XILINX_VIVADO/data/verilog/src/glbl.v
+//$XILINX_VIVADO/data/verilog/src/unisim_comp.v
+//-y $XILINX_VIVADO/data/verilog/src/retarget/
+$XILINX_VIVADO/data/verilog/src/unisims/LUT6_2.v
+$XILINX_VIVADO/data/verilog/src/unisims/LUT6.v
+$XILINX_VIVADO/data/verilog/src/unisims/MUXCY.v
+$XILINX_VIVADO/data/verilog/src/unisims/XORCY.v
+$XILINX_VIVADO/data/verilog/src/unisims/RAM32M.v
+$XILINX_VIVADO/data/verilog/src/unisims/FDRE.v
+$XILINX_VIVADO/data/verilog/src/unisims/SRL16E.v
+$XILINX_VIVADO/data/verilog/src/unisims/RAMB18E1.v
+$XILINX_VIVADO/data/verilog/src/unisims/RAM64M.v
       
 ../testbench/soc_testbench.v
 ../testbench/test_tasks.v
@@ -99,3 +113,4 @@ boot_rom.v
 // FPGA SoC Top
 //
 ../soc/soc.v
+../soc/xilinx_wrappers.v
