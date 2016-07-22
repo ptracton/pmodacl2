@@ -32,7 +32,7 @@ module pb_spi (/*AUTOARG*/
    output [7:0] data_out;
    input        read_strobe;
    input        write_strobe;
-   output       interrupt;
+   output wire  interrupt;
 
    //
    // SPI Interface
@@ -41,22 +41,19 @@ module pb_spi (/*AUTOARG*/
    output wire  ncs_o;
    output wire  mosi_o;
    input wire   miso_i;
-
+   
+   wire [7:0]   rfdout;
+   wire [7:0]   spsr;
+   
    /*AUTOREG*/
-   // Beginning of automatic regs (for this module's undeclared outputs)
-   reg                  interrupt;
-   // End of automatics
 
    /*AUTOWIRE*/
    // Beginning of automatic wires (for undeclared instantiated-module outputs)
    wire                 clear_spif;             // From regs of spi_regs.v
    wire                 clear_wcol;             // From regs of spi_regs.v
-   wire                 inta_o;                 // From spi of simple_spi_top_modified.v
-   wire [7:0]           rfdout;                 // From spi of simple_spi_top_modified.v
    wire                 rfre;                   // From regs of spi_regs.v
    wire [7:0]           spcr;                   // From regs of spi_regs.v
    wire [7:0]           sper;                   // From regs of spi_regs.v
-   wire [7:0]           spsr;                   // From spi of simple_spi_top_modified.v
    wire [7:0]           wfdin;                  // From regs of spi_regs.v
    wire                 wfwe;                   // From regs of spi_regs.v
    wire                 wr_spsr;                // From regs of spi_regs.v
@@ -74,6 +71,7 @@ module pb_spi (/*AUTOARG*/
                  .spcr                  (spcr[7:0]),
                  .sper                  (sper[7:0]),
                  // Inputs
+                 .spsr                  (spsr[7:0]),
                  .clk                   (clk),
                  .reset                 (reset),
                  .port_id               (port_id[7:0]),
@@ -83,16 +81,16 @@ module pb_spi (/*AUTOARG*/
                  .rfdout                (rfdout[7:0]));
    
    
-   simple_spi_top_modified spi(/*AUTOINST*/
+   simple_spi_top_modified spi(
                                // Outputs
                                .spsr            (spsr[7:0]),
-                               .inta_o          (inta_o),
+                               .inta_o          (interrupt),
                                .rfdout          (rfdout[7:0]),
                                .sck_o           (sck_o),
                                .mosi_o          (mosi_o),
                                // Inputs
-                               .clk_i           (clk_i),
-                               .nrst            (nrst),
+                               .clk_i           (clk),
+                               .nrst            (~reset),
                                .spcr            (spcr[7:0]),
                                .sper            (sper[7:0]),
                                .wfwe            (wfwe),

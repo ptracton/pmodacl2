@@ -40,6 +40,9 @@ module system_controller(/*AUTOARG*/
    wire                         xclk_buf;
    IBUFG xclk_ibufg(.I(clk_in), .O(xclk_buf));
    wire                         locked;
+`else
+   assign locked = 1;
+   
 `endif
    
 

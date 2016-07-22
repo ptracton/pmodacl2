@@ -80,13 +80,23 @@ module pb_uart_regs (/*AUTOARG*/
    // Interrupt Logic
    //
    always @(posedge clk)
-     interrupt <= rx_data_present;
+     if (reset) begin
+        interrupt <= 0;        
+     end else begin
+        interrupt <= rx_data_present;
+     end
    
    //
    // Register Writing
    //
    always @(posedge clk)
-     if (write_strobe == 1'b1) begin
+     if (reset) begin
+        buffer_write <= 0;
+        uart_data_write <= 0;
+        uart_control <= 0;
+        uart_irq_mask <= 0;
+        uart_clock_divide <= 0;        
+     end else if (write_strobe == 1'b1) begin
         
         if (uart_data_in_enable) begin
            uart_data_write <= data_in;           
@@ -120,41 +130,44 @@ module pb_uart_regs (/*AUTOARG*/
    //
    // Register Reading
    //
-   always @(posedge clk) begin
-
-      if (uart_data_out_enable) begin
-         data_out <= uart_data_read;         
-         buffer_read <= 1'b1;           
-      end 
-
-      else if (uart_control_enable) begin
-         data_out <= uart_control;           
-      end
-
-      else if (uart_status_enable) begin
-         data_out <= {2'b00, tx_full, tx_half_full, tx_data_present, rx_full, rx_half_full, rx_data_present};           
-      end
-      
-      else if (uart_irq_mask_enable) begin
-         data_out <= {5'b0, uart_irq_mask};           
-      end
-
-      else if (uart_irq_enable) begin
-         data_out <= {5'b0, uart_irq};           
-      end
-      
-      else if (uart_clock_divide_lower_enable) begin
-         data_out <= uart_clock_divide[7:0];           
-      end
-      
-      else if (uart_clock_divide_upper_enable) begin
-         data_out <= uart_clock_divide[15:8];           
-      end  
-
-      else begin
-         data_out <= 8'h00;   
-         buffer_read <= 1'b0;                 
-      end
+   always @(posedge clk) 
+     if (reset) begin
+        data_out <= 0;
+        buffer_read <= 0;        
+     end else begin
+        if (uart_data_out_enable) begin
+           data_out <= uart_data_read;         
+           buffer_read <= 1'b1;           
+        end 
+        
+        else if (uart_control_enable) begin
+           data_out <= uart_control;           
+        end
+        
+        else if (uart_status_enable) begin
+           data_out <= {2'b00, tx_full, tx_half_full, tx_data_present, rx_full, rx_half_full, rx_data_present};           
+        end
+        
+        else if (uart_irq_mask_enable) begin
+           data_out <= {5'b0, uart_irq_mask};           
+        end
+        
+        else if (uart_irq_enable) begin
+           data_out <= {5'b0, uart_irq};           
+        end
+        
+        else if (uart_clock_divide_lower_enable) begin
+           data_out <= uart_clock_divide[7:0];           
+        end
+        
+        else if (uart_clock_divide_upper_enable) begin
+           data_out <= uart_clock_divide[15:8];           
+        end  
+        
+        else begin
+           data_out <= 8'h00;   
+           buffer_read <= 1'b0;                 
+        end        
       
    end // always @ (posedge clk)   
    

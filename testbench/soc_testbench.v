@@ -66,7 +66,7 @@ module soc_testbench;
            .reset_in(reset), 
            .switches(switches),
            .push_buttons(push_buttons), 
-           .RX(RX)            
+           .RX(1'b0)            
            );   
    
    /****************************************************************************

@@ -86,7 +86,7 @@ module soc (/*AUTOARG*/
                              .reset_in(reset_in)
                              );
 
-   assign interrupt = uart_interrupt | button_interrupt | spi_interrupt;
+   assign interrupt = /*uart_interrupt |*/ button_interrupt | spi_interrupt;
    assign kcpsm6_sleep = 1'b0;   
    cpu picoblaze(
                  // Outputs
