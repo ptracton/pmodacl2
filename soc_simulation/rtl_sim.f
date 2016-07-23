@@ -27,16 +27,16 @@
 //$XILINX_VIVADO/data/verilog/src/unisims/RAM64M.v
 
 
-/cadtools/apps/Vivado/2015.1/data/verilog/src/glbl.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6_2.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/MUXCY.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/XORCY.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM32M.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/FDRE.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/SRL16E.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAMB18E1.v
-/cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM64M.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/glbl.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6_2.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/LUT6.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/MUXCY.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/XORCY.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM32M.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/FDRE.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/SRL16E.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAMB18E1.v
+// /cadtools/apps/Vivado/2015.1/data/verilog/src/unisims/RAM64M.v
       
 ../testbench/soc_testbench.v
 ../testbench/test_tasks.v
@@ -123,4 +123,14 @@ boot_rom.v
 // FPGA SoC Top
 //
 ../soc/soc.v
-../soc/xilinx_wrappers.v
+../soc/xilinx/FDRE.v
+../soc/xilinx/glbl.v
+../soc/xilinx/LUT6_2.v
+../soc/xilinx/LUT6.v
+../soc/xilinx/MUXCY.v
+../soc/xilinx/RAM32M.v
+../soc/xilinx/RAM64M.v
+../soc/xilinx/RAMB18E1.v
+../soc/xilinx/SRL16E.v
+../soc/xilinx/xilinx_wrappers.v
+../soc/xilinx/XORCY.v      

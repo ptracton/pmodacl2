@@ -43,6 +43,8 @@ module test_case ();
 //      @(posedge spi_testbench.ncs);
 //      `TEST_COMPARE("TEMPERATURE",  16'h02A5, spi_testbench.dut.temperature);
       
+      #2000;
+      `SWITCHES <= 1;
       
       #100000;
       `TEST_COMPLETE;      

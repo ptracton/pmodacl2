@@ -10,7 +10,7 @@
 
 module pb_spi (/*AUTOARG*/
    // Outputs
-   data_out, interrupt, sck_o, ncs_o, mosi_o,
+   temperature, data_out, interrupt, sck_o, ncs_o, mosi_o,
    // Inputs
    clk, reset, port_id, data_in, read_strobe, write_strobe, miso_i
    ) ;
@@ -23,7 +23,8 @@ module pb_spi (/*AUTOARG*/
    //
    input clk;
    input reset;
-
+   output wire [15:0] temperature;
+   
    //
    // Picoblaze Bus Interface
    //
@@ -62,6 +63,7 @@ module pb_spi (/*AUTOARG*/
    spi_regs  #(.BASE_ADDRESS(BASE_ADDRESS))
    regs(/*AUTOINST*/
         // Outputs
+        .temperature                    (temperature[15:0]),
         .data_out                       (data_out[7:0]),
         .wfwe                           (wfwe),
         .rfre                           (rfre),

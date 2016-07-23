@@ -37,9 +37,12 @@ module test_case ();
       @(posedge `WB_CLK);
       @(negedge `ADXL362_RESET);
 
-//      @(posedge spi_testbench.ncs);
-//      @(posedge spi_testbench.ncs);
-      @(posedge spi_testbench.ncs);
+      $display("Wait for SPI to start #@ %d", $time);
+      
+      @(negedge spi_testbench.ncs_o);
+      $display("SPI to started #@ %d", $time);
+      @(posedge spi_testbench.ncs_o);
+      $display("SPI done #@ %d", $time);
       `TEST_COMPARE("TEMPERATURE",  16'h02A5, spi_testbench.dut.temperature);
       
       

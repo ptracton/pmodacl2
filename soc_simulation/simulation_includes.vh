@@ -15,6 +15,12 @@
 `define WB_RST      `TB.wb_rst
 `define WB_CLK      `TB.wb_clk
 
+`define LEDS         `TB.leds
+`define SWITCHES     `TB.switches_reg
+`define PUSH_BUTTONS `TB.push_buttons_reg
+`define ANODE        `TB.anode
+`define CATHODE      `TB.cathode
+
 `define DUT `TB.dut
 `define CPU `DUT.picoblaze
 `define PROCESSOR `CPU.processor

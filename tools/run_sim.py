@@ -67,11 +67,11 @@ if __name__ == "__main__":
                         action="store")
     parser.add_argument("--application",
                         help="Which code to run in this test",
-                        required=True,
+                        required=False,
                         action="store")    
     parser.add_argument("--soc",
                         help="Run the SoC design",
-                        required=True,
+                        required=False,
                         action="store_true")    
 
     args = parser.parse_args()

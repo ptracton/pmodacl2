@@ -71,6 +71,12 @@ module soc (/*AUTOARG*/
    wire         spi_interrupt;
    wire         uart_interrupt;
    wire         button_interrupt;
+
+   //
+   // Select displaying temperature if any switch is set
+   //
+   wire         display_temperature = |switches;
+   
    
    //
    // Clock and Reset System Controller
@@ -196,6 +202,8 @@ module soc (/*AUTOARG*/
                   .anode(anode), 
                   .cathode(cathode),
                   // Inputs
+                  .temperature(temperature),
+                  .display_temperature(display_temperature),
                   .clk(clk_sys), 
                   .reset(reset_sys), 
                   .port_id(port_id), 
@@ -229,6 +237,7 @@ module soc (/*AUTOARG*/
                                       .sck_o(sck_o), 
                                       .ncs_o(ncs_o), 
                                       .mosi_o(mosi_o),
+                                      .temperature(temperature),
                                       
                                       // Inputs
                                       .clk(clk_sys), 

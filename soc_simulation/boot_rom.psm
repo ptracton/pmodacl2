@@ -62,6 +62,8 @@
     constant SPI_DATA,         72
     constant SPI_EXTENSION,    73
     constant SPI_NCS,          74
+    constant SPI_TEMP_LOW,     75
+    constant SPI_TEMP_HIGH,    76   
 
 	  constant ADXL362_DEVID_AD          ,00
 	  constant ADXL362_DEVID_MST         ,01
@@ -129,8 +131,8 @@ start:
 
     call DISPLAY_INIT
 
-  call SPI_INIT
-  call ADXL362_INIT
+    call SPI_INIT
+    call ADXL362_INIT
     
   
     ;;
@@ -147,7 +149,10 @@ loop:
     input s1, SW1_DATA
     output s1, LED1_DATA
 
-UP_BUTTON:    
+UP_BUTTON:
+
+    call ADXL362_GET_TEMPERATURE 
+    
     test sE, 01
     jump Z, RIGHT_BUTTON
 
@@ -407,6 +412,23 @@ ADXL362_FINISH_INIT:
   
   return
 
+ADXL362_GET_TEMPERATURE:
+
+    load sC, ADXL362_TEMP_LOW
+    store sC, 00
+    call ADXL362_SPI_READ
+
+    fetch s0, 00  
+    output s0, SPI_TEMP_LOW    
+    
+    load sC, ADXL362_TEMP_HIGH
+    store sC, 00
+    call ADXL362_SPI_READ
+
+    fetch s0, 00  
+    output s0, SPI_TEMP_HIGH
+    
+    return
   
 IRQ_HANDLER:
     input s1, UART_STATUS

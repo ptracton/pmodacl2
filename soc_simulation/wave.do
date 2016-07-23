@@ -45,7 +45,6 @@ add wave -noupdate -group {DUT SYS CON} /soc_testbench/dut/sys_con/reset_sys
 add wave -noupdate -group {DUT SYS CON} /soc_testbench/dut/sys_con/locked
 add wave -noupdate -group {DUT SYS CON} -radix hexadecimal /soc_testbench/dut/sys_con/reset_count
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/clk_sys
-add wave -noupdate -expand -group Picoblaze /soc_testbench/dut/picoblaze/processor/stack_pointer
 add wave -noupdate -expand -group Picoblaze -radix ascii /soc_testbench/dut/picoblaze/processor/kcpsm6_opcode
 add wave -noupdate -expand -group Picoblaze -radix ascii /soc_testbench/dut/picoblaze/processor/kcpsm6_status
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/in_port
@@ -54,19 +53,29 @@ add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/du
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/write_strobe
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/read_strobe
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/interrupt
-add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/interrupt_ack
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/kcpsm6_sleep
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/reset_sys
-add wave -noupdate -expand -group Picoblaze /soc_testbench/dut/picoblaze/processor/internal_reset
-add wave -noupdate -expand -group Picoblaze /soc_testbench/dut/picoblaze/processor/internal_reset_value
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/address
 add wave -noupdate -expand -group Picoblaze -radix hexadecimal -childformat {{{/soc_testbench/dut/picoblaze/instruction[17]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[16]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[15]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[14]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[13]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[12]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[11]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[10]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[9]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[8]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[7]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[6]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[5]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[4]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[3]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[2]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[1]} -radix ascii} {{/soc_testbench/dut/picoblaze/instruction[0]} -radix ascii}} -subitemconfig {{/soc_testbench/dut/picoblaze/instruction[17]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[16]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[15]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[14]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[13]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[12]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[11]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[10]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[9]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[8]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[7]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[6]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[5]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[4]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[3]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[2]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[1]} {-height 17 -radix ascii} {/soc_testbench/dut/picoblaze/instruction[0]} {-height 17 -radix ascii}} /soc_testbench/dut/picoblaze/instruction
-add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/bram_enable
-add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/k_write_strobe
-add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/kcpsm6_reset
-add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/int_request
-add wave -noupdate -group {DUT SPI} -radix hexadecimal /soc_testbench/dut/spi/WIDTH
-add wave -noupdate -group {DUT SPI} -radix hexadecimal /soc_testbench/dut/spi/BASE_ADDRESS
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s0
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s1
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s2
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s3
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s4
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s5
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s6
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s7
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s8
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_s9
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_sA
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_sB
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_sC
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_sD
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_sE
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_sF
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_spm00
+add wave -noupdate -expand -group Picoblaze -radix hexadecimal /soc_testbench/dut/picoblaze/processor/sim_spm01
+add wave -noupdate -group {DUT SPI} /soc_testbench/dut/spi/temperature
 add wave -noupdate -group {DUT SPI} -radix hexadecimal /soc_testbench/dut/spi/clk
 add wave -noupdate -group {DUT SPI} -radix hexadecimal /soc_testbench/dut/spi/reset
 add wave -noupdate -group {DUT SPI} -radix hexadecimal /soc_testbench/dut/spi/port_id
@@ -106,7 +115,6 @@ add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/d
 add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/dut/spi/spi/mosi_o
 add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/dut/spi/spi/miso_i
 add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/dut/spi/spi/treg
-add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/dut/spi/spi/rreg
 add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/dut/spi/spi/wfre
 add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/dut/spi/spi/rfwe
 add wave -noupdate -group {DUT SPI MODIFIED} -radix hexadecimal /soc_testbench/dut/spi/spi/rffull
@@ -201,45 +209,45 @@ add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/
 add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/dut/uart/receiver/sample_input
 add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/dut/uart/receiver/buffer_write_value
 add wave -noupdate -group {DUT UART RECEIVER} -radix hexadecimal /soc_testbench/dut/uart/receiver/buffer_write
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/MISO
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/MOSI
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/SCLK
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_DONE
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_IDLE
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_WRITE
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/address
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/bit_count
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/bit_count_previous
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/clk_sys
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/command
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_fifo_read
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_fifo_write
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_rd
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_read
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_write
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/empty_fifo
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/finish
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/first
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/flush
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/flush_fifo
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/full_fifo
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/nCS
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/next_state
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/read_data_fifo
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/read_fifo
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/rst
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/running_bit_count
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_byte_begin
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_byte_done
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_data_in
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_data_out
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/state
-add wave -noupdate -expand -group {ADXL362 SPI} -radix ascii /soc_testbench/adxl362/spi/state_name
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/terminate_transaction
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/wr_next_state
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/wr_state
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/write
-add wave -noupdate -expand -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/write_fifo
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/MISO
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/MOSI
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/SCLK
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_DONE
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_IDLE
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/WR_WRITE
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/address
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/bit_count
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/bit_count_previous
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/clk_sys
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/command
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_fifo_read
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_fifo_write
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_rd
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_read
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/data_write
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/empty_fifo
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/finish
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/first
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/flush
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/flush_fifo
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/full_fifo
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/nCS
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/next_state
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/read_data_fifo
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/read_fifo
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/rst
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/running_bit_count
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_byte_begin
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_byte_done
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_data_in
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/spi_data_out
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/state
+add wave -noupdate -group {ADXL362 SPI} -radix ascii /soc_testbench/adxl362/spi/state_name
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/terminate_transaction
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/wr_next_state
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/wr_state
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/write
+add wave -noupdate -group {ADXL362 SPI} -radix hexadecimal /soc_testbench/adxl362/spi/write_fifo
 add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/act_inact_ctrl
 add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/address
 add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/clk_sys
@@ -262,8 +270,76 @@ add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl3
 add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/xdata
 add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/ydata
 add wave -noupdate -group {ADXL362 REGS} -radix hexadecimal /soc_testbench/adxl362/registers/zdata
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/anode
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/cathode
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/clk
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/data_in
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/data_out
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/display_segment0
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/display_segment1
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/display_segment2
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/display_segment3
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/display_temperature
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/port_id
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/read_strobe
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/reset
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/segment0
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/segment1
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/segment2
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/segment3
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/temperature
+add wave -noupdate -group {DUT DISPLAY TOP} -radix hexadecimal /soc_testbench/dut/seven_segments/write_strobe
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/anode
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/cathode
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/clk
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/next_state
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/reset
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/segment0
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/segment1
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/segment2
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/segment3
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/state
+add wave -noupdate -group {DUT DISPLAY INST} -radix hexadecimal /soc_testbench/dut/seven_segments/seven_segments/timer_expired
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/RX
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/TX
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/anode
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/cathode
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/clk
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/int1
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/int2
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/leds
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/miso_i
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/mosi_o
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/ncs_o
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/push_buttons
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/push_buttons_regs
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/reset
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/sck_o
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/switches
+add wave -noupdate -group TESTBENCH -radix hexadecimal /soc_testbench/switches_reg
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/clk
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/data_in
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/data_out
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/gpio
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/gpio_data_in
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/gpio_data_out
+add wave -noupdate -group {DUT GPIO SW0} -color Salmon -radix hexadecimal /soc_testbench/dut/sw0/gpio_oen
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/interrupt
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/port_id
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/read_strobe
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/reset
+add wave -noupdate -group {DUT GPIO SW0} -radix hexadecimal /soc_testbench/dut/sw0/write_strobe
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/clk
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/data_in
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/data_out
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/gpio_oen
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/gpio_oen_enable
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/port_id
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/read_strobe
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/reset
+add wave -noupdate -group {DUT GPIO SW0 REGS} -radix hexadecimal /soc_testbench/dut/sw0/regs/write_strobe
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {33265000 ps} 0}
+WaveRestoreCursors {{Cursor 1} {945100 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 467
 configure wave -valuecolwidth 100
@@ -279,4 +355,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {107496289 ps}
+WaveRestoreZoom {102534847 ps} {102745535 ps}
